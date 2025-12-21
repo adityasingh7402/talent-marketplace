@@ -47,6 +47,7 @@ export default function LandingPage() {
         <StaggeredMenu
           isFixed={true}
           displayItemNumbering={false}
+          actionElement={<ModeToggle />}
           items={[
             { label: 'Home', ariaLabel: 'Go to home page', link: '/' },
             { label: 'How it works', ariaLabel: 'Learn how it works', link: '#how-it-works' },
