@@ -1,16 +1,31 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { UserCircle2, Briefcase, Star, Search, ShieldCheck, Zap } from "lucide-react";
+import { Star, UserCircle2, Briefcase, Search, ShieldCheck, Zap } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import GlitchText from "@/components/glitch-text";
 import StaggeredMenu from "@/components/staggered-menu";
 import SpotlightCard from "@/components/spotlight-card";
-import BlobBackground from "@/components/blob-background";
 import GridMotion from "@/components/grid-motion";
 import LogoLoop from "@/components/logo-loop";
 
 export default function LandingPage() {
+  const [activeCard, setActiveCard] = useState<'talent' | 'industry'>('talent');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const talentBg = "/talent-bg.png";
+  const industryBg = "/industry-bg.png";
+
   return (
     <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20">
       {/* Mobile Staggered Menu */}
@@ -63,14 +78,14 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <main className="grow pt-20">
+      <main className="grow">
         {/* Hero Section */}
-        <section className="px-6 relative overflow-hidden pb-40">
+        <section className="px-6 relative overflow-hidden min-h-[90vh] flex items-center pt-20 pb-20">
           <GridMotion />
 
-          <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
+          <div className="relative z-10 max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
             {/* Left Column: Text Content */}
-            <div className="text-center lg:text-left space-y-8 lg:col-span-3">
+            <div className="text-center lg:text-left space-y-8 lg:col-span-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider animate-in fade-in slide-in-from-bottom-4 duration-1000 mx-auto lg:mx-0">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -89,47 +104,181 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Right Column: Dynamic Cards */}
-            <div className="flex flex-col gap-6 w-full lg:col-span-2 lg:ml-auto">
-              <Link href="/talent/register" className="w-full">
-                <div className="group relative p-6 lg:p-10 rounded-3xl bg-primary text-white overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/20">
-                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-700">
-                    <UserCircle2 className="w-24 h-24" />
-                  </div>
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-                      <UserCircle2 className="w-6 h-6" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="font-heading text-2xl lg:text-3xl font-bold">Join as Talent</h3>
-                      <p className="text-primary-foreground/80 text-base">Actors & Singers. <br />Build your professional portfolio.</p>
-                    </div>
-                    <div className="inline-flex items-center gap-2 font-bold group-hover:translate-x-2 transition-transform">
-                      Get Started <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                    </div>
-                  </div>
+            {/* Right Column: Dynamic Interactive Cards */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full lg:col-span-6 lg:ml-auto h-[700px] sm:h-[450px] lg:h-[500px]">
+              {/* Talent Card */}
+              <motion.div
+                layout
+                initial={false}
+                animate={{
+                  flex: isMobile ? 1 : (activeCard === 'talent' ? 2.5 : 1),
+                }}
+                transition={{
+                  duration: 0.6,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+                onClick={() => !isMobile && setActiveCard('talent')}
+                className={`relative rounded-4xl overflow-hidden cursor-pointer group border-2 bg-zinc-950 ${(activeCard === 'talent' || isMobile)
+                  ? 'border-white shadow-2xl shadow-white/10'
+                  : 'border-white/10 hover:border-white/20'
+                  }`}
+              >
+                {/* Background Image & Overlay */}
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                  <motion.img
+                    layout
+                    animate={{ scale: (activeCard === 'talent' || isMobile) ? 1.1 : 1 }}
+                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    src={talentBg}
+                    className="w-full h-full object-cover opacity-60 transition-opacity group-hover:opacity-75"
+                    alt="Talent background"
+                  />
+                  <motion.div
+                    animate={{ backgroundColor: (activeCard === 'talent' || isMobile) ? 'transparent' : 'rgba(0,0,0,0.3)' }}
+                    className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-zinc-950/20 to-transparent"
+                  />
                 </div>
-              </Link>
 
-              <Link href="/industry/register" className="w-full">
-                <div className="group relative p-6 lg:p-10 rounded-3xl bg-card border border-border/50 overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-xl">
-                  <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-150 transition-transform duration-700">
-                    <Briefcase className="w-24 h-24 text-foreground" />
-                  </div>
-                  <div className="relative z-10 space-y-4">
-                    <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center">
-                      <Briefcase className="w-6 h-6 text-primary" />
+                <div className="relative z-10 h-full p-6 lg:p-8 flex flex-col justify-between">
+                  <motion.div layout="position">
+                    <motion.div
+                      layout
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-500 ${(activeCard === 'talent' || isMobile) ? 'bg-white/10 backdrop-blur-md border border-white/20' : 'bg-secondary/40 backdrop-blur-md'
+                        }`}
+                    >
+                      <UserCircle2 className={`w-6 h-6 ${(activeCard === 'talent' || isMobile) ? 'text-white' : 'text-foreground'}`} />
+                    </motion.div>
+
+                    <motion.div layout="position" className="space-y-4">
+                      <motion.h3 layout="position" className={`font-heading font-black leading-tight transition-all duration-500 ${(activeCard === 'talent' || isMobile) ? 'text-2xl lg:text-4xl text-white' : 'text-xl text-foreground'
+                        }`}>
+                        Join as <br />Talent
+                      </motion.h3>
+
+                      <AnimatePresence mode="popLayout">
+                        {(activeCard === 'talent' || isMobile) && (
+                          <motion.p
+                            layout
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.4 }}
+                            className="text-white/60 text-base font-medium max-w-[240px]"
+                          >
+                            Showcase your skills, build your reel, and get noticed by top industry producers.
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  </motion.div>
+
+                  <Link href="/talent/register" className="mt-auto cursor-target">
+                    <motion.div
+                      layout="position"
+                      className={`inline-flex items-center gap-2 font-bold ${(activeCard === 'talent' || isMobile)
+                        ? 'text-white translate-x-0'
+                        : 'text-muted-foreground'
+                        } ${(activeCard !== 'talent' && !isMobile) ? 'opacity-0 translate-y-4' : 'opacity-100'}`}
+                    >
+                      Get Started <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                    </motion.div>
+                  </Link>
+
+                  {/* Large Background Icon for Sunk State */}
+                  {(activeCard !== 'talent' && !isMobile) && (
+                    <div className="absolute bottom-0 right-0 p-6 opacity-10">
+                      <UserCircle2 className="w-24 h-24" />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="font-heading text-2xl lg:text-3xl font-bold">Find & Hire</h3>
-                      <p className="text-muted-foreground text-base">Producers & Directors. <br />Access elite casting database.</p>
-                    </div>
-                    <div className="inline-flex items-center gap-2 font-bold text-primary group-hover:translate-x-2 transition-transform">
-                      Start Hiring <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                    </div>
-                  </div>
+                  )}
                 </div>
-              </Link>
+              </motion.div>
+
+              {/* Industry Card */}
+              <motion.div
+                layout
+                initial={false}
+                animate={{
+                  flex: isMobile ? 1 : (activeCard === 'industry' ? 2.5 : 1),
+                }}
+                transition={{
+                  duration: 0.6,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+                onClick={() => !isMobile && setActiveCard('industry')}
+                className={`relative rounded-4xl overflow-hidden cursor-pointer group border-2 bg-zinc-950 ${(activeCard === 'industry' || isMobile)
+                  ? 'border-white shadow-2xl shadow-white/10'
+                  : 'border-white/10 hover:border-white/20'
+                  }`}
+              >
+                {/* Background Image & Overlay */}
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                  <motion.img
+                    layout
+                    animate={{ scale: (activeCard === 'industry' || isMobile) ? 1.1 : 1 }}
+                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    src={industryBg}
+                    className="w-full h-full object-cover opacity-60 transition-opacity group-hover:opacity-75"
+                    alt="Industry background"
+                  />
+                  <motion.div
+                    animate={{ backgroundColor: (activeCard === 'industry' || isMobile) ? 'transparent' : 'rgba(0,0,0,0.3)' }}
+                    className="absolute inset-0 bg-linear-to-t from-zinc-950/80 via-zinc-950/20 to-transparent"
+                  />
+                </div>
+
+                <div className="relative z-10 h-full p-6 lg:p-8 flex flex-col justify-between">
+                  <motion.div layout="position">
+                    <motion.div
+                      layout
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-500 ${(activeCard === 'industry' || isMobile) ? 'bg-white/10 backdrop-blur-md border border-white/20' : 'bg-secondary/40 backdrop-blur-md'
+                        }`}
+                    >
+                      <Briefcase className={`w-6 h-6 ${(activeCard === 'industry' || isMobile) ? 'text-white' : 'text-foreground'}`} />
+                    </motion.div>
+
+                    <motion.div layout="position" className="space-y-4">
+                      <motion.h3 layout="position" className={`font-heading font-black leading-tight transition-all duration-500 ${(activeCard === 'industry' || isMobile) ? 'text-2xl lg:text-4xl text-white' : 'text-xl text-foreground'
+                        }`}>
+                        Find & <br />Hire
+                      </motion.h3>
+
+                      <AnimatePresence mode="popLayout">
+                        {(activeCard === 'industry' || isMobile) && (
+                          <motion.p
+                            layout
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.4 }}
+                            className="text-white/60 text-base font-medium max-w-[240px]"
+                          >
+                            Access the world's most elite casting database and find the perfect talent for your next project.
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  </motion.div>
+
+                  <Link href="/industry/register" className="mt-auto cursor-target">
+                    <motion.div
+                      layout="position"
+                      className={`inline-flex items-center gap-2 font-bold ${(activeCard === 'industry' || isMobile)
+                        ? 'text-white translate-x-0'
+                        : 'text-muted-foreground'
+                        } ${(activeCard !== 'industry' && !isMobile) ? 'opacity-0 translate-y-4' : 'opacity-100'}`}
+                    >
+                      Start Hiring <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                    </motion.div>
+                  </Link>
+
+                  {/* Large Background Icon for Sunk State */}
+                  {(activeCard !== 'industry' && !isMobile) && (
+                    <div className="absolute bottom-0 right-0 p-6 opacity-10">
+                      <Briefcase className="w-24 h-24" />
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>
@@ -206,8 +355,8 @@ export default function LandingPage() {
                   title: "Unified Login",
                   desc: "Secure authentication powered by Clerk for a zero-friction entry into the marketplace."
                 }
-              ].map((feature, i) => (
-                <SpotlightCard key={i} spotlightColor="rgba(0, 229, 255, 0.2)" className="cursor-target">
+              ].map((feature) => (
+                <SpotlightCard key={feature.title} spotlightColor="rgba(0, 229, 255, 0.2)" className="cursor-target">
                   <div className="space-y-4">
                     <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center">
                       {feature.icon}
@@ -241,7 +390,7 @@ export default function LandingPage() {
       </main>
 
       <footer className="border-t border-border/40 py-12 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:row items-center justify-between gap-8 text-muted-foreground text-sm">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-muted-foreground text-sm">
           <div className="flex items-center gap-2 grayscale brightness-50">
             <Star className="w-5 h-5 fill-secondary" />
             <span className="font-heading font-bold text-lg">TalentDirect.</span>
