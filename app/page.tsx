@@ -15,6 +15,17 @@ import LogoLoop from "@/components/logo-loop";
 export default function LandingPage() {
   const [activeCard, setActiveCard] = useState<'talent' | 'industry'>('talent');
   const [isMobile, setIsMobile] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (isMobile || isHovered) return;
+
+    const interval = setInterval(() => {
+      setActiveCard(prev => prev === 'talent' ? 'industry' : 'talent');
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [isMobile, isHovered]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -51,7 +62,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Star className="text-white w-5 h-5 fill-white" />
               </div>
-              <span className="font-heading font-bold text-xl tracking-tight text-foreground">TalentDirect.</span>
+              <span className="font-heading font-bold text-xl tracking-tight">TalentDirect.</span>
             </div>
           }
         />
@@ -105,7 +116,11 @@ export default function LandingPage() {
             </div>
 
             {/* Right Column: Dynamic Interactive Cards */}
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:col-span-6 lg:ml-auto h-[700px] sm:h-[450px] lg:h-[500px]">
+            <div
+              className="flex flex-col sm:flex-row gap-4 w-full lg:col-span-6 lg:ml-auto h-[700px] sm:h-[450px] lg:h-[500px]"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
               {/* Talent Card */}
               <motion.div
                 layout
@@ -114,13 +129,13 @@ export default function LandingPage() {
                   flex: isMobile ? 1 : (activeCard === 'talent' ? 2.5 : 1),
                 }}
                 transition={{
-                  duration: 0.6,
-                  ease: [0.22, 1, 0.36, 1]
+                  duration: 0.8,
+                  ease: [0.16, 1, 0.3, 1]
                 }}
                 onClick={() => !isMobile && setActiveCard('talent')}
-                className={`relative rounded-4xl overflow-hidden cursor-pointer group border bg-zinc-950 ${(activeCard === 'talent' || isMobile)
+                className={`relative rounded-4xl overflow-hidden cursor-pointer group border-2 bg-zinc-950 ${(activeCard === 'talent' || isMobile)
                   ? 'border-primary shadow-2xl shadow-primary/10'
-                  : 'border-white/5 hover:border-primary/20'
+                  : 'border-primary/40 hover:border-primary/60'
                   }`}
               >
                 {/* Background Image & Overlay */}
@@ -201,13 +216,13 @@ export default function LandingPage() {
                   flex: isMobile ? 1 : (activeCard === 'industry' ? 2.5 : 1),
                 }}
                 transition={{
-                  duration: 0.6,
-                  ease: [0.22, 1, 0.36, 1]
+                  duration: 0.8,
+                  ease: [0.16, 1, 0.3, 1]
                 }}
                 onClick={() => !isMobile && setActiveCard('industry')}
-                className={`relative rounded-4xl overflow-hidden cursor-pointer group border bg-zinc-950 ${(activeCard === 'industry' || isMobile)
+                className={`relative rounded-4xl overflow-hidden cursor-pointer group border-2 bg-zinc-950 ${(activeCard === 'industry' || isMobile)
                   ? 'border-primary shadow-2xl shadow-primary/10'
-                  : 'border-white/5 hover:border-primary/20'
+                  : 'border-primary/40 hover:border-primary/60'
                   }`}
               >
                 {/* Background Image & Overlay */}

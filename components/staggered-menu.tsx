@@ -34,7 +34,7 @@ export interface StaggeredMenuProps {
 
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     position = 'right',
-    colors = ['#1e1e22', '#35353c'],
+    colors = ['#ffffff', '#f8f8f8'],
     items = [],
     socialItems = [],
     displaySocials = true,
@@ -426,7 +426,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                     className="staggered-menu-header absolute top-0 left-0 w-full flex items-center justify-between p-[1.1em_1.5em] md:p-[2em] glass border-b border-border/40 backdrop-blur-md pointer-events-none z-20"
                     aria-label="Main navigation header"
                 >
-                    <div className="sm-logo flex items-center select-none pointer-events-auto" aria-label="Logo">
+                    <div className={`sm-logo flex items-center select-none pointer-events-auto transition-colors duration-300 ${open ? 'text-black' : 'text-foreground'}`} aria-label="Logo">
                         {logoElement ? logoElement : (
                             <img
                                 src={logoUrl || ''}
@@ -482,7 +482,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 <aside
                     id="staggered-menu-panel"
                     ref={panelRef}
-                    className="staggered-menu-panel absolute top-0 right-0 h-full bg-white flex flex-col p-[6em_1.5em_1.5em_1.5em] md:p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-md"
+                    className="staggered-menu-panel absolute top-0 right-0 h-dvh bg-white flex flex-col p-[6em_1.5em_1.5em_1.5em] md:p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-md"
                     style={{ WebkitBackdropFilter: 'blur(12px)' }}
                     aria-hidden={!open}
                 >
@@ -496,7 +496,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                                 items.map((it, idx) => (
                                     <li className="sm-panel-itemWrap relative overflow-hidden leading-none" key={it.label + idx}>
                                         <a
-                                            className="sm-panel-item relative text-black font-semibold text-[2.5rem] md:text-[4rem] cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline pr-[1.4em]"
+                                            className="sm-panel-item relative text-primary font-semibold text-[2.5rem] md:text-[4rem] cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline pr-[1.4em]"
                                             href={it.link}
                                             aria-label={it.ariaLabel}
                                             data-index={idx + 1}
@@ -559,7 +559,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 .sm-scope .sm-panel-itemWrap { position: relative; overflow: hidden; line-height: 1; }
 .sm-scope .sm-panel-itemWrap:not(:last-child) { border-bottom: 1px solid rgba(0, 0, 0, 0.08); padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
 .sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
-.sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(280px, 45vw, 420px); height: 100%; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em 2em 2em 2em; overflow-y: auto; z-index: 10; visibility: hidden; opacity: 0; }
+.sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(280px, 45vw, 420px); height: 100dvh; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em 2em 2em 2em; overflow-y: auto; z-index: 10; visibility: hidden; opacity: 0; }
 .sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
 .sm-scope .sm-prelayers { position: absolute; top: 0; right: 0; bottom: 0; width: clamp(280px, 45vw, 420px); pointer-events: none; z-index: 5; visibility: hidden; opacity: 0; }
 .sm-scope [data-position='left'] .sm-prelayers { right: auto; left: 0; }
