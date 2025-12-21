@@ -11,6 +11,9 @@ import StaggeredMenu from "@/components/staggered-menu";
 import SpotlightCard from "@/components/spotlight-card";
 import GridMotion from "@/components/grid-motion";
 import LogoLoop from "@/components/logo-loop";
+import MagicBento from "@/components/magic-bento";
+import InfiniteMenu from "@/components/infinite-menu";
+import { useMemo } from "react";
 
 export default function LandingPage() {
   const [activeCard, setActiveCard] = useState<'talent' | 'industry'>('talent');
@@ -330,64 +333,148 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Infinite 3D Talent Grid */}
+        <section className="h-[70vh] relative bg-zinc-950 overflow-hidden border-y border-white/5">
+          {useMemo(() => (
+            <InfiniteMenu
+              items={[
+                {
+                  image: '/grid/actor.png',
+                  link: '#',
+                  title: 'ACTORS',
+                  description: 'World-class screen presence for major motion pictures.'
+                },
+                {
+                  image: '/grid/camera.png',
+                  link: '#',
+                  title: 'DPs',
+                  description: 'Mastering light and shadow for cinematic storytelling.'
+                },
+                {
+                  image: '/grid/director.png',
+                  link: '#',
+                  title: 'DIRECTORS',
+                  description: 'Visionaries shaping the next generation of cinema.'
+                },
+                {
+                  image: '/grid/clapper.png',
+                  link: '#',
+                  title: 'PRODUCERS',
+                  description: 'Bringing complex creative visions to reality.'
+                },
+                {
+                  image: '/grid/singer.png',
+                  link: '#',
+                  title: 'SINGERS',
+                  description: 'Vocal powerhouses for soundtracks and musicals.'
+                },
+                {
+                  image: '/grid/stunt.png',
+                  link: '#',
+                  title: 'STUNTS',
+                  description: 'Precision physical performance and high-octane action.'
+                }
+              ]}
+            />
+          ), [])}
+        </section>
+
         {/* Features Section */}
-        <section id="features" className="py-32 px-6">
-          <div className="max-w-6xl mx-auto space-y-24">
-            <div className="text-center space-y-4">
-              <h2 className="font-heading text-4xl md:text-5xl font-bold">The Complete Production Toolkit</h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Everything you need to discover, manage, and book world-class talent in one place.</p>
+        <section id="features" className="min-h-screen flex items-center py-24 px-6 relative overflow-hidden bg-zinc-950/20">
+          <div className="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
+            {/* Left side (35%) */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider">
+                Platform Essentials
+              </div>
+              <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-foreground">
+                The Complete Production <br /> <span className="text-primary italic">Toolkit.</span>
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed max-w-md">
+                Everything you need to discover, manage, and book world-class talent in one place, optimized for high-end cinematic workflows.
+              </p>
+
+              <div className="flex flex-col gap-4 pt-4 border-t border-white/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary" />
+                  <span className="text-sm font-semibold">4K High-Res Portfolio Hosting</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary" />
+                  <span className="text-sm font-semibold">Instant Compound Filtering</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-primary" />
+                  <span className="text-sm font-semibold">Secure HLS Stream Protection</span>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: <Star className="w-8 h-8 text-primary" />,
-                  title: "Elite Portfolio Hosting",
-                  desc: "High-resolution headshots and 4K reels powered by Cloudinary and Mux for lightning-fast playback."
-                },
-                {
-                  icon: <Search className="w-8 h-8 text-primary" />,
-                  title: "Smart Filter Engine",
-                  desc: "Search by Age, Category, Skill, and Role with our advanced compound indexing for instant results."
-                },
-                {
-                  icon: <ShieldCheck className="w-8 h-8 text-primary" />,
-                  title: "Privacy First",
-                  desc: "Concierge contact management. We protect your data and only share once interest is verified."
-                },
-                {
-                  icon: <Zap className="w-8 h-8 text-primary" />,
-                  title: "HLS Protected Streaming",
-                  desc: "Secure video delivery ensures your reels are viewed across all devices without risk of unauthorized downloads."
-                },
-                {
-                  icon: <Star className="w-8 h-8 text-primary" />,
-                  title: "Role Specific Data",
-                  desc: "Flexible profiles tailored to whether you are a Stunt Performer, Cinematographer, or Composer."
-                },
-                {
-                  icon: <UserCircle2 className="w-8 h-8 text-primary" />,
-                  title: "Unified Login",
-                  desc: "Secure authentication powered by Clerk for a zero-friction entry into the marketplace."
-                }
-              ].map((feature) => (
-                <SpotlightCard key={feature.title} spotlightColor="rgba(239, 68, 68, 0.15)" className="cursor-target">
-                  <div className="space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center">
-                      {feature.icon}
-                    </div>
-                    <h3 className="font-heading text-xl font-bold">{feature.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
-                  </div>
-                </SpotlightCard>
-              ))}
+            {/* Right side (65%) */}
+            <div className="lg:col-span-8 w-full">
+              <MagicBento
+                textAutoHide={false}
+                enableStars={true}
+                enableSpotlight={true}
+                enableBorderGlow={true}
+                enableTilt={true}
+                enableMagnetism={true}
+                clickEffect={true}
+                spotlightRadius={300}
+                particleCount={10}
+                glowColor="239, 68, 68"
+                cards={[
+                  {
+                    icon: <Star className="w-6 h-6" />,
+                    title: "Elite Portfolio Hosting",
+                    description: "High-resolution headshots and 4K reels powered by Cloudinary and Mux.",
+                    label: "Visuals",
+                    image: "/grid/actor.png"
+                  },
+                  {
+                    icon: <Search className="w-6 h-6" />,
+                    title: "Smart Filter Engine",
+                    description: "Search by Age, Category, Skill, and Role with compound indexing.",
+                    label: "Discovery",
+                    image: "/grid/camera.png"
+                  },
+                  {
+                    icon: <ShieldCheck className="w-6 h-6" />,
+                    title: "Privacy First",
+                    description: "Concierge contact management. We protect your data and only share once verified.",
+                    label: "Security",
+                    image: "/grid/director.png"
+                  },
+                  {
+                    icon: <Zap className="w-6 h-6" />,
+                    title: "HLS Protected Streaming",
+                    description: "Secure video delivery ensures your reels are viewed without unauthorized downloads.",
+                    label: "Protection",
+                    image: "/grid/clapper.png"
+                  },
+                  {
+                    icon: <Briefcase className="w-6 h-6" />,
+                    title: "Role Specific Data",
+                    description: "Flexible profiles tailored to Stunt Performers, Cinematographers, or Composers.",
+                    label: "Talent",
+                    image: "/grid/singer.png"
+                  },
+                  {
+                    icon: <UserCircle2 className="w-6 h-6" />,
+                    title: "Unified Login",
+                    description: "Secure authentication powered by Clerk for a zero-friction entry.",
+                    label: "Access",
+                    image: "/grid/stunt.png"
+                  }
+                ]}
+              />
             </div>
           </div>
         </section>
 
         {/* Final CTA */}
         <section className="px-6 pb-32">
-          <div className="max-w-6xl mx-auto rounded-[3rem] bg-zinc-950 border border-primary/20 shadow-2xl shadow-primary/5 p-12 md:p-24 relative overflow-hidden text-center text-white">
+          <div className="max-w-7xl mx-auto rounded-[3rem] bg-zinc-950 border border-primary/20 shadow-2xl shadow-primary/5 p-12 md:p-24 relative overflow-hidden text-center text-white">
             {/* Decorative Circles */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full translate-y-1/2 -translate-x-1/2" />
