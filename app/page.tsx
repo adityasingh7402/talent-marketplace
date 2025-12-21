@@ -74,7 +74,7 @@ export default function LandingPage() {
         <div className="flex items-center gap-4">
           <ModeToggle />
           <Link href="/login" className="cursor-target text-sm font-medium hover:text-primary transition-colors">Sign In</Link>
-          <Button size="sm" className="cursor-target rounded-full px-6 bg-primary hover:bg-primary/90">Join Platform</Button>
+          <Button size="sm" className="cursor-target rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-bold border border-primary/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]">Join Platform</Button>
         </div>
       </nav>
 
@@ -95,7 +95,7 @@ export default function LandingPage() {
               </div>
 
               <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tighter text-foreground">
-                Connecting <span className="text-red-600 italic inline-flex"><GlitchText speed={1} enableShadows={true}>Premier</GlitchText></span> Talent <br className="hidden lg:block" />
+                Connecting <span className="text-primary italic inline-flex"><GlitchText speed={1} enableShadows={true}>Premier</GlitchText></span> Talent <br className="hidden lg:block" />
                 with the World's Creators.
               </h1>
 
@@ -118,9 +118,9 @@ export default function LandingPage() {
                   ease: [0.22, 1, 0.36, 1]
                 }}
                 onClick={() => !isMobile && setActiveCard('talent')}
-                className={`relative rounded-4xl overflow-hidden cursor-pointer group border-2 bg-zinc-950 ${(activeCard === 'talent' || isMobile)
-                  ? 'border-white shadow-2xl shadow-white/10'
-                  : 'border-white/10 hover:border-white/20'
+                className={`relative rounded-4xl overflow-hidden cursor-pointer group border bg-zinc-950 ${(activeCard === 'talent' || isMobile)
+                  ? 'border-primary shadow-2xl shadow-primary/10'
+                  : 'border-white/5 hover:border-primary/20'
                   }`}
               >
                 {/* Background Image & Overlay */}
@@ -143,14 +143,14 @@ export default function LandingPage() {
                   <motion.div layout="position">
                     <motion.div
                       layout
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-500 ${(activeCard === 'talent' || isMobile) ? 'bg-white/10 backdrop-blur-md border border-white/20' : 'bg-secondary/40 backdrop-blur-md'
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-500 ${(activeCard === 'talent' || isMobile) ? 'bg-primary/10 backdrop-blur-md border border-primary/20' : 'bg-secondary/40 backdrop-blur-md'
                         }`}
                     >
                       <UserCircle2 className={`w-6 h-6 ${(activeCard === 'talent' || isMobile) ? 'text-white' : 'text-foreground'}`} />
                     </motion.div>
 
                     <motion.div layout="position" className="space-y-4">
-                      <motion.h3 layout="position" className={`font-heading font-black leading-tight transition-all duration-500 ${(activeCard === 'talent' || isMobile) ? 'text-2xl lg:text-4xl text-white' : 'text-xl text-foreground'
+                      <motion.h3 layout="position" className={`font-heading font-black leading-tight transition-all duration-500 ${(activeCard === 'talent' || isMobile) ? 'text-2xl lg:text-4xl text-primary' : 'text-xl text-foreground'
                         }`}>
                         Join as <br />Talent
                       </motion.h3>
@@ -176,7 +176,7 @@ export default function LandingPage() {
                     <motion.div
                       layout="position"
                       className={`inline-flex items-center gap-2 font-bold ${(activeCard === 'talent' || isMobile)
-                        ? 'text-white translate-x-0'
+                        ? 'text-primary translate-x-0'
                         : 'text-muted-foreground'
                         } ${(activeCard !== 'talent' && !isMobile) ? 'opacity-0 translate-y-4' : 'opacity-100'}`}
                     >
@@ -205,9 +205,9 @@ export default function LandingPage() {
                   ease: [0.22, 1, 0.36, 1]
                 }}
                 onClick={() => !isMobile && setActiveCard('industry')}
-                className={`relative rounded-4xl overflow-hidden cursor-pointer group border-2 bg-zinc-950 ${(activeCard === 'industry' || isMobile)
-                  ? 'border-white shadow-2xl shadow-white/10'
-                  : 'border-white/10 hover:border-white/20'
+                className={`relative rounded-4xl overflow-hidden cursor-pointer group border bg-zinc-950 ${(activeCard === 'industry' || isMobile)
+                  ? 'border-primary shadow-2xl shadow-primary/10'
+                  : 'border-white/5 hover:border-primary/20'
                   }`}
               >
                 {/* Background Image & Overlay */}
@@ -230,14 +230,14 @@ export default function LandingPage() {
                   <motion.div layout="position">
                     <motion.div
                       layout
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-500 ${(activeCard === 'industry' || isMobile) ? 'bg-white/10 backdrop-blur-md border border-white/20' : 'bg-secondary/40 backdrop-blur-md'
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-colors duration-500 ${(activeCard === 'industry' || isMobile) ? 'bg-primary/10 backdrop-blur-md border border-primary/20' : 'bg-secondary/40 backdrop-blur-md'
                         }`}
                     >
                       <Briefcase className={`w-6 h-6 ${(activeCard === 'industry' || isMobile) ? 'text-white' : 'text-foreground'}`} />
                     </motion.div>
 
                     <motion.div layout="position" className="space-y-4">
-                      <motion.h3 layout="position" className={`font-heading font-black leading-tight transition-all duration-500 ${(activeCard === 'industry' || isMobile) ? 'text-2xl lg:text-4xl text-white' : 'text-xl text-foreground'
+                      <motion.h3 layout="position" className={`font-heading font-black leading-tight transition-all duration-500 ${(activeCard === 'industry' || isMobile) ? 'text-2xl lg:text-4xl text-primary' : 'text-xl text-foreground'
                         }`}>
                         Find & <br />Hire
                       </motion.h3>
@@ -263,7 +263,7 @@ export default function LandingPage() {
                     <motion.div
                       layout="position"
                       className={`inline-flex items-center gap-2 font-bold ${(activeCard === 'industry' || isMobile)
-                        ? 'text-white translate-x-0'
+                        ? 'text-primary translate-x-0'
                         : 'text-muted-foreground'
                         } ${(activeCard !== 'industry' && !isMobile) ? 'opacity-0 translate-y-4' : 'opacity-100'}`}
                     >
@@ -356,7 +356,7 @@ export default function LandingPage() {
                   desc: "Secure authentication powered by Clerk for a zero-friction entry into the marketplace."
                 }
               ].map((feature) => (
-                <SpotlightCard key={feature.title} spotlightColor="rgba(0, 229, 255, 0.2)" className="cursor-target">
+                <SpotlightCard key={feature.title} spotlightColor="rgba(239, 68, 68, 0.15)" className="cursor-target">
                   <div className="space-y-4">
                     <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center">
                       {feature.icon}
@@ -372,7 +372,7 @@ export default function LandingPage() {
 
         {/* Final CTA */}
         <section className="px-6 pb-32">
-          <div className="max-w-6xl mx-auto rounded-[3rem] bg-linear-to-br from-primary to-accent p-12 md:p-24 relative overflow-hidden text-center text-white">
+          <div className="max-w-6xl mx-auto rounded-[3rem] bg-zinc-950 border border-primary/20 shadow-2xl shadow-primary/5 p-12 md:p-24 relative overflow-hidden text-center text-white">
             {/* Decorative Circles */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full translate-y-1/2 -translate-x-1/2" />
@@ -381,8 +381,8 @@ export default function LandingPage() {
               <h2 className="font-heading text-5xl md:text-7xl font-black">Ready to Begin Your Next Production?</h2>
               <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto">Join the directory used by the industry's top casting directors and producers.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="xl" className="cursor-target w-full sm:w-auto rounded-full px-12 py-8 text-xl font-bold bg-white text-primary hover:bg-zinc-100 transition-all duration-300 shadow-2xl">Create Profile</Button>
-                <Button size="xl" className="cursor-target w-full sm:w-auto rounded-full px-12 py-8 text-xl font-bold border-2 border-white/40 bg-transparent hover:bg-white/10 text-white transition-all duration-300">Contact Sales</Button>
+                <Button size="xl" className="cursor-target w-full sm:w-auto rounded-full px-12 py-8 text-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 shadow-2xl shadow-primary/30">Create Profile</Button>
+                <Button size="xl" className="cursor-target w-full sm:w-auto rounded-full px-12 py-8 text-xl font-bold border-2 border-primary/40 bg-transparent hover:bg-primary/10 text-white transition-all duration-300">Contact Sales</Button>
               </div>
             </div>
           </div>

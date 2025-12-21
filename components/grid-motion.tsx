@@ -12,7 +12,17 @@ const GridMotion: FC<GridMotionProps> = ({ items = [] }) => {
 
     const totalItems = 28;
     const defaultItems = Array.from({ length: totalItems }, (_, index) => ``);
-    const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems;
+
+    // Cinematic Content Pool
+    const cinemaContent = [
+        { text: "ACTOR", img: "/grid/actor.png" },
+        { text: "CINEMA", img: "/grid/camera.png" },
+        { text: "SING", img: "/grid/singer.png" },
+        { text: "DIRECT", img: "/grid/director.png" },
+        { text: "STUNT", img: "/grid/stunt.png" },
+        { text: "PRODUCE", img: "/grid/clapper.png" },
+        { text: "CASTING", img: "/grid/actor.png" }, // Re-using for variety
+    ];
 
     useEffect(() => {
         // Automatic continuous motion
@@ -38,6 +48,7 @@ const GridMotion: FC<GridMotionProps> = ({ items = [] }) => {
 
     return (
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0 opacity-100">
+            <div className="absolute inset-0 bg-background/60 z-10" /> {/* Darkening overlay for overall grid */}
             <section className="w-full h-full overflow-hidden relative flex items-center justify-center">
                 <div className="gap-4 flex-none relative w-[160vw] h-[160vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center scale-110">
                     {Array.from({ length: 4 }, (_, rowIndex) => (
@@ -50,13 +61,23 @@ const GridMotion: FC<GridMotionProps> = ({ items = [] }) => {
                             }}
                         >
                             {Array.from({ length: 7 }, (_, itemIndex) => {
-                                const placeholderText = ["ACTOR", "DIRECTOR", "SING", "CASTING", "PRODUCER", "VOICE", "TALENT"][(rowIndex + itemIndex) % 7];
+                                const content = cinemaContent[(rowIndex + itemIndex) % cinemaContent.length];
 
                                 return (
-                                    <div key={itemIndex} className="relative">
-                                        <div className="relative w-full h-40 lg:h-64 overflow-hidden rounded-[32px] bg-foreground/2 dark:bg-foreground/3 flex items-center justify-center border border-foreground/5 dark:border-foreground/10 transition-colors duration-500">
-                                            <div className="p-4 text-center z-1 font-black text-5xl tracking-tighter text-foreground/3 dark:text-foreground/5 select-none uppercase italic">
-                                                {placeholderText}
+                                    <div key={itemIndex} className="relative group">
+                                        <div className="relative w-full h-40 lg:h-64 overflow-hidden rounded-[40px] bg-zinc-900 flex items-center justify-center border border-white/5 transition-all duration-700">
+                                            {/* Background Image */}
+                                            <img
+                                                src={content.img}
+                                                alt={content.text}
+                                                className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale contrast-125 transition-transform duration-1000 group-hover:scale-110"
+                                            />
+                                            {/* Image Overlay */}
+                                            <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent opacity-60" />
+
+                                            {/* Text Overlay */}
+                                            <div className="relative p-4 text-center z-10 font-black text-5xl tracking-tighter text-white/10 select-none uppercase italic transition-all duration-500 group-hover:text-primary/20">
+                                                {content.text}
                                             </div>
                                         </div>
                                     </div>

@@ -27,8 +27,8 @@ const GlitchText: FC<GlitchTextProps> = ({
     const inlineStyles: CustomCSSProperties = {
         '--after-duration': `${speed * 3}s`,
         '--before-duration': `${speed * 2}s`,
-        '--after-shadow': enableShadows ? '-2px 0 #9333ea' : 'none', // Purple
-        '--before-shadow': enableShadows ? '2px 0 #0ea5e9' : 'none'  // Sky Blue
+        '--after-shadow': enableShadows ? '-2px 0 #8B0000' : 'none', // Dark Red
+        '--before-shadow': enableShadows ? '2px 0 #FF0000' : 'none'  // Bright Red
     };
 
     const baseClasses = 'relative inline-block select-none cursor-pointer';
