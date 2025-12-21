@@ -6,6 +6,9 @@ import { ModeToggle } from "@/components/mode-toggle";
 import GlitchText from "@/components/glitch-text";
 import StaggeredMenu from "@/components/staggered-menu";
 import SpotlightCard from "@/components/spotlight-card";
+import BlobBackground from "@/components/blob-background";
+import GridMotion from "@/components/grid-motion";
+import LogoLoop from "@/components/logo-loop";
 
 export default function LandingPage() {
   return (
@@ -60,54 +63,70 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <main className="grow pt-32">
+      <main className="grow pt-20">
         {/* Hero Section */}
-        <section className="px-6 relative overflow-hidden pb-20">
-          {/* Background Blobs */}
-          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" />
-          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] -z-10" />
+        <section className="px-6 relative overflow-hidden pb-40">
+          <GridMotion />
 
-          <div className="max-w-6xl mx-auto text-center space-y-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-secondary/5 text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-              </span>
-              The Gold Standard for Modern Casting
+          <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
+            {/* Left Column: Text Content */}
+            <div className="text-center lg:text-left space-y-8 lg:col-span-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider animate-in fade-in slide-in-from-bottom-4 duration-1000 mx-auto lg:mx-0">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                The Gold Standard for Modern Casting
+              </div>
+
+              <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tighter text-foreground">
+                Connecting <span className="text-red-600 italic inline-flex"><GlitchText speed={1} enableShadows={true}>Premier</GlitchText></span> Talent <br className="hidden lg:block" />
+                with the World's Creators.
+              </h1>
+
+              <p className="text-lg md:text-lg text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                A bespoke concierge marketplace designed for Actors, Singers, and Industry Professionals to collaborate seamlessly.
+              </p>
             </div>
 
-            <h1 className="font-heading text-6xl md:text-8xl font-black leading-[1.1] tracking-tighter text-foreground max-w-4xl mx-auto">
-              Connecting <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-accent"><GlitchText speed={0.8} enableOnHover={false} className="inline-block translate-y-[2px]">Premier</GlitchText> Talent</span> with the World's Creators.
-            </h1>
-
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              A bespoke concierge marketplace designed for Actors, Singers, and Industry Professionals to collaborate seamlessly.
-            </p>
-
-            {/* TWO MAIN PATHS */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
-              <Link href="/talent/register" className="w-full sm:w-auto">
-                <div className="group relative p-px rounded-2xl bg-linear-to-br from-primary via-primary/50 to-primary/20">
-                  <div className="relative bg-background rounded-[15px] p-8 space-y-6 flex flex-col items-center hover:bg-transparent transition-all duration-500 overflow-hidden">
-                    <UserCircle2 className="w-16 h-16 text-primary group-hover:scale-110 transition-transform duration-500" />
-                    <div className="text-center space-y-2">
-                      <h3 className="font-heading text-2xl font-bold">Join as Talent</h3>
-                      <p className="text-muted-foreground text-sm max-w-[200px]">Actors, Singers, Directors. Build your legacy portfolio.</p>
+            {/* Right Column: Dynamic Cards */}
+            <div className="flex flex-col gap-6 w-full lg:col-span-2 lg:ml-auto">
+              <Link href="/talent/register" className="w-full">
+                <div className="group relative p-6 lg:p-10 rounded-3xl bg-primary text-white overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/20">
+                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-150 transition-transform duration-700">
+                    <UserCircle2 className="w-24 h-24" />
+                  </div>
+                  <div className="relative z-10 space-y-4">
+                    <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                      <UserCircle2 className="w-6 h-6" />
                     </div>
-                    <Button className="cursor-target w-full rounded-xl py-6 text-lg font-bold">Get Started</Button>
+                    <div className="space-y-2">
+                      <h3 className="font-heading text-2xl lg:text-3xl font-bold">Join as Talent</h3>
+                      <p className="text-primary-foreground/80 text-base">Actors & Singers. <br />Build your professional portfolio.</p>
+                    </div>
+                    <div className="inline-flex items-center gap-2 font-bold group-hover:translate-x-2 transition-transform">
+                      Get Started <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                    </div>
                   </div>
                 </div>
               </Link>
 
-              <Link href="/industry/register" className="cursor-target w-full sm:w-auto">
-                <div className="group relative p-px rounded-2xl border border-border/60 hover:border-accent transition-all duration-300">
-                  <div className="relative bg-background/50 backdrop-blur-sm rounded-[15px] p-8 space-y-6 flex flex-col items-center hover:bg-accent/5 transition-all duration-500">
-                    <Briefcase className="w-16 h-16 text-accent group-hover:scale-110 transition-transform duration-500" />
-                    <div className="text-center space-y-2">
-                      <h3 className="font-heading text-2xl font-bold">Find & Hire</h3>
-                      <p className="text-muted-foreground text-sm max-w-[200px]">Producers & Casting Directors. Access the elite directory.</p>
+              <Link href="/industry/register" className="w-full">
+                <div className="group relative p-6 lg:p-10 rounded-3xl bg-card border border-border/50 overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-xl">
+                  <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-150 transition-transform duration-700">
+                    <Briefcase className="w-24 h-24 text-foreground" />
+                  </div>
+                  <div className="relative z-10 space-y-4">
+                    <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center">
+                      <Briefcase className="w-6 h-6 text-primary" />
                     </div>
-                    <Button variant="outline" className="cursor-target w-full rounded-xl py-6 text-lg font-bold border-accent/20 hover:bg-accent hover:text-white transition-all duration-300">Browse Catalog</Button>
+                    <div className="space-y-2">
+                      <h3 className="font-heading text-2xl lg:text-3xl font-bold">Find & Hire</h3>
+                      <p className="text-muted-foreground text-base">Producers & Directors. <br />Access elite casting database.</p>
+                    </div>
+                    <div className="inline-flex items-center gap-2 font-bold text-primary group-hover:translate-x-2 transition-transform">
+                      Start Hiring <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -115,14 +134,35 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Dynamic Section: Stats/Trusted */}
-        <section className="border-y border-border/40 py-12 bg-secondary/5 overflow-hidden">
-          <div className="max-w-6xl mx-auto flex flex-wrap justify-around items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-            <span className="text-xl font-bold tracking-widest uppercase">Sony Pictures</span>
-            <span className="text-xl font-bold tracking-widest uppercase">Warner Bros.</span>
-            <span className="text-xl font-bold tracking-widest uppercase">Netflix</span>
-            <span className="text-xl font-bold tracking-widest uppercase">Universal</span>
-            <span className="text-xl font-bold tracking-widest uppercase">Paramount</span>
+        {/* Dynamic Section: Trusted Partners Logo Loop */}
+        <section className="border-y border-border/40 py-6 bg-secondary/5 overflow-hidden">
+          <div className="opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            <LogoLoop
+              logos={[
+                { node: "SONY PICTURES" },
+                { node: "WARNER BROS." },
+                { node: "NETFLIX" },
+                { node: "UNIVERSAL" },
+                { node: "PARAMOUNT" },
+                { node: "DISNEY" },
+                { node: "HBO MAX" },
+                { node: "AMAZON STUDIOS" },
+                { node: "MARVEL" },
+                { node: "PIXAR" },
+                { node: "20TH CENTURY" },
+                { node: "LIONSGATE" },
+                { node: "DREAMWORKS" },
+                { node: "MGM" },
+                { node: "HBO" }
+              ].map(item => ({
+                ...item,
+                node: <span className="text-2xl font-bold tracking-widest uppercase whitespace-nowrap">{item.node}</span>
+              }))}
+              speed={40}
+              gap={80}
+              logoHeight={40}
+              fadeOut={true}
+            />
           </div>
         </section>
 
