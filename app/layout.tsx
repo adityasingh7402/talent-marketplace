@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import TargetCursor from "@/components/target-cursor";
 import SmoothScroll from "@/components/smooth-scroll";
+import PageTransition from "@/components/page-transition";
+import RevealWrapper from "@/components/reveal-wrapper";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,12 +38,15 @@ export default function RootLayout({
           storageKey="talent-marketplace-theme"
         >
           <SmoothScroll>
+            <PageTransition />
             <TargetCursor
               spinDuration={2}
               hideDefaultCursor={true}
               parallaxOn={true}
             />
-            {children}
+            <RevealWrapper>
+              {children}
+            </RevealWrapper>
           </SmoothScroll>
         </ThemeProvider>
       </body>
