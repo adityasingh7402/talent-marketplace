@@ -1,19 +1,33 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { usePathname } from "next/navigation";
+import { motion, useAnimationControls } from 'framer-motion';
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export default function PageTransition() {
-    const containerRef = useRef<HTMLUListElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
+    const [isClient, setIsClient] = useState(false);
     const pathname = usePathname();
-    const isInitialRender = useRef(true);
-
     const lastPathname = useRef(pathname);
+    const controls = useAnimationControls();
 
+    useEffect(() => {
+        setIsClient(true);
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Desktop GSAP Transition
     useIsomorphicLayoutEffect(() => {
+        if (!isClient || isMobile) return;
+
         // We want it to run on initial load and on every route change
         const tl = gsap.timeline();
 
@@ -21,7 +35,6 @@ export default function PageTransition() {
         document.body.style.overflow = "hidden";
 
         // Immediate state preparation to prevent flash
-        // We use a small delay or synchronized set to ensure it catches the new DOM
         gsap.set(".panels", {
             display: "block",
             clipPath: "circle(100% at 50% 50%)",
@@ -75,7 +88,97 @@ export default function PageTransition() {
             tl.kill();
             document.body.style.overflow = "";
         };
-    }, [pathname]);
+    }, [pathname, isMobile, isClient]);
+
+    const [transitionEnded, setTransitionEnded] = useState(false);
+
+    // Mobile Framer Motion Transition
+    useEffect(() => {
+        if (!isClient || !isMobile) return;
+        setTransitionEnded(false);
+
+        const sequence = async () => {
+            // First move to right edge (cover screen)
+            await controls.start({
+                x: "100%",
+                transition: { duration: 0.4, ease: "easeInOut" }
+            });
+            // Then reverse with width animation (reveal screen)
+            await controls.start({
+                x: "0%",
+                width: "0%",
+                transition: { duration: 0.8, ease: "easeInOut" }
+            });
+            window.dispatchEvent(new Event('transitionComplete'));
+            document.body.style.overflow = "visible";
+            document.documentElement.style.overflow = "visible";
+
+            lastPathname.current = pathname;
+            setTransitionEnded(true);
+        };
+
+        document.body.style.overflow = "hidden";
+        sequence();
+
+        return () => {
+            document.body.style.overflow = "visible";
+        };
+    }, [pathname, isMobile, isClient, controls]);
+
+    if (!isClient) return null;
+
+    if (isMobile) {
+        const showPanels = !transitionEnded || lastPathname.current !== pathname;
+
+        return (
+            <>
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    .page-main-reveal {
+                        clip-path: none !important;
+                        pointer-events: auto !important;
+                    }
+                    body {
+                        overflow: visible !important;
+                        touch-action: auto !important;
+                        -webkit-overflow-scrolling: touch !important;
+                    }
+                    html {
+                        overflow: visible !important;
+                    }
+                ` }} />
+                {showPanels && (
+                    <>
+                        <motion.div
+                            key={`mobile-p1-${pathname}`}
+                            className='fixed top-0 bottom-0 right-full w-screen h-screen z-[999] bg-primary pointer-events-none'
+                            initial={{ x: "0", width: "100%" }}
+                            animate={controls}
+                        />
+                        <motion.div
+                            key={`mobile-p2-${pathname}`}
+                            className='fixed top-0 bottom-0 right-full w-screen h-screen z-[998] bg-muted pointer-events-none'
+                            initial={{ x: "100%", width: "100%" }}
+                            animate={{ x: "0%", width: "0%" }}
+                            transition={{ delay: 0.6, duration: 0.8, ease: "easeInOut" }}
+                        />
+                        <motion.div
+                            key={`mobile-p3-${pathname}`}
+                            className='fixed top-0 bottom-0 right-full w-screen h-screen z-[997] bg-background pointer-events-none'
+                            initial={{ x: "100%", width: "100%" }}
+                            animate={{ x: "0%", width: "0%" }}
+                            transition={{ delay: 0.8, duration: 0.8, ease: "easeInOut" }}
+                            onAnimationComplete={() => {
+                                if (lastPathname.current === pathname) {
+                                    setTransitionEnded(true);
+                                }
+                            }}
+                        />
+                    </>
+                )}
+            </>
+        );
+    }
 
     return (
         <ul className="panels fixed top-0 left-1/2 w-[180vw] h-full -translate-x-1/2 -skew-x-35 pointer-events-none z-9999 overflow-hidden list-none bg-primary" style={{ clipPath: "circle(100% at 50% 50%)" }}>
