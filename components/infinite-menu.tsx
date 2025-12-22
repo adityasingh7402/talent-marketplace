@@ -1132,15 +1132,30 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
           select-none
           absolute
           font-black
-          text-[4rem]
-          left-[1.6em]
-          top-1/2
-          transform
-          translate-x-[20%]
-          -translate-y-1/2
           transition-all
           ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
           text-white
+          
+          /* Mobile styles (centered) */
+          text-5xl
+          leading-tight
+          left-1/2
+          top-[45%]
+          -translate-x-1/2
+          -translate-y-1/2
+          text-center
+          w-full
+          px-4
+          
+          /* Desktop styles (original layout) */
+          md:text-[4rem]
+          md:left-[1.6em]
+          md:top-1/2
+          md:text-left
+          md:w-auto
+          md:px-0
+          md:translate-x-[20%]
+
           ${isMoving
                                 ? 'opacity-0 pointer-events-none duration-100'
                                 : 'opacity-100 pointer-events-auto duration-500'
@@ -1154,16 +1169,30 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
                         className={`
           select-none
           absolute
-          max-w-[15ch]
-          text-[1.5rem]
-          top-1/2
-          right-[1%]
           transition-all
           ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
           text-white
+          
+          /* Mobile styles (centered below title) */
+          text-lg
+          top-[55%]
+          left-1/2
+          text-center
+          w-full
+          max-w-[80vw]
+          
+          /* Desktop styles (original layout) */
+          md:text-[1.5rem]
+          md:max-w-[15ch]
+          md:top-1/2
+          md:left-auto
+          md:right-[1%]
+          md:text-left
+          md:w-auto
+
           ${isMoving
-                                ? 'opacity-0 pointer-events-none duration-100 translate-x-[-60%] -translate-y-1/2'
-                                : 'opacity-100 pointer-events-auto duration-500 translate-x-[-90%] -translate-y-1/2'
+                                ? 'opacity-0 pointer-events-none duration-100 -translate-x-1/2 -translate-y-1/2 md:translate-x-[-60%]'
+                                : 'opacity-100 pointer-events-auto duration-500 -translate-x-1/2 -translate-y-1/2 md:translate-x-[-90%]'
                             }
         `}
                     >
@@ -1188,8 +1217,8 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0 }) => {
           transition-all
           ease-[cubic-bezier(0.25,0.1,0.25,1.0)]
           ${isMoving
-                                ? 'bottom-[-80px] opacity-0 pointer-events-none duration-100 scale-0 -translate-x-1/2'
-                                : 'bottom-[3.8em] opacity-100 pointer-events-auto duration-500 scale-100 -translate-x-1/2'
+                                ? 'bottom-[10%] opacity-0 pointer-events-none duration-100 scale-0 -translate-x-1/2 md:bottom-[-80px]'
+                                : 'bottom-[15%] opacity-100 pointer-events-auto duration-500 scale-100 -translate-x-1/2 md:bottom-[3.8em]'
                             }
         `}
                     >
