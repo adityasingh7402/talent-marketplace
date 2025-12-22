@@ -390,6 +390,17 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         };
     }, [closeOnClickAway, open, closeMenu]);
 
+    React.useEffect(() => {
+        if (open) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [open]);
+
     if (!mounted) return null;
 
     return (
@@ -509,6 +520,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                                             href={it.link}
                                             aria-label={it.ariaLabel}
                                             data-index={idx + 1}
+                                            onClick={closeMenu}
                                         >
                                             <span className="sm-panel-itemLabel inline-block origin-[50%_100%] will-change-transform">
                                                 {it.label}
@@ -541,6 +553,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="sm-socials-link text-[1.1rem] md:text-[1.2rem] font-medium text-[#111] no-underline relative inline-block py-[2px] transition-[color,opacity] duration-300 ease-linear"
+                                                onClick={closeMenu}
                                             >
                                                 {s.label}
                                             </a>

@@ -59,7 +59,12 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20">
       {/* Mobile Staggered Menu */}
-      <div className="md:hidden">
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={pageLoaded ? { y: 0, opacity: 1 } : { y: -50, opacity: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="md:hidden"
+      >
         <StaggeredMenu
           isFixed={true}
           displayItemNumbering={false}
@@ -86,7 +91,7 @@ export default function LandingPage() {
             </div>
           }
         />
-      </div>
+      </motion.div>
 
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
