@@ -80,6 +80,7 @@ export default function PageTransition() {
                 onComplete: () => {
                     document.body.style.overflow = "";
                     lastPathname.current = pathname;
+                    window.dispatchEvent(new Event('transitionComplete'));
                 }
             }, "-=0.3")
             .set(".panels", { display: "none" });

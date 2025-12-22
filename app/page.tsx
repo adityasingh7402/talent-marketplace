@@ -22,7 +22,19 @@ export default function LandingPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const [pageLoaded, setPageLoaded] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleTransitionComplete = () => setPageLoaded(true);
+    window.addEventListener('transitionComplete', handleTransitionComplete);
+    // Fallback if event is missed
+    const timeout = setTimeout(() => setPageLoaded(true), 3000);
+    return () => {
+      window.removeEventListener('transitionComplete', handleTransitionComplete);
+      clearTimeout(timeout);
+    };
+  }, []);
 
   useEffect(() => {
     if (isMobile || isHovered) return;
@@ -76,7 +88,12 @@ export default function LandingPage() {
         />
       </div>
 
-      <nav className="hidden md:flex fixed top-0 w-full z-50 glass border-b border-border/40 px-6 py-4 items-center justify-between">
+      <motion.nav
+        initial={{ y: -100, opacity: 0 }}
+        animate={pageLoaded ? { y: 0, opacity: 1 } : { y: -100, opacity: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="hidden md:flex fixed top-0 w-full z-50 glass border-b border-border/40 px-6 py-4 items-center justify-between"
+      >
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
             <Star className="text-white w-6 h-6 fill-white" />
@@ -95,16 +112,28 @@ export default function LandingPage() {
           <Link href="/login" className="cursor-target text-sm font-medium hover:text-primary transition-colors">Sign In</Link>
           <Button size="sm" className="cursor-target rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-bold border border-primary/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]">Join Platform</Button>
         </div>
-      </nav>
+      </motion.nav>
 
       <main className="grow">
         {/* Hero Section */}
         <section className="px-6 relative overflow-hidden min-h-[90vh] flex items-center pt-20 pb-20">
-          <GridMotion />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={pageLoaded ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
+            className="absolute inset-0 pointer-events-none"
+          >
+            <GridMotion />
+          </motion.div>
 
           <div className="relative z-10 max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
             {/* Left Column: Text Content */}
-            <div className="text-center lg:text-left space-y-8 lg:col-span-6">
+            <motion.div
+              initial={{ x: -100, opacity: 0 }}
+              animate={pageLoaded ? { x: 0, opacity: 1 } : { x: -100, opacity: 0 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              className="text-center lg:text-left space-y-8 lg:col-span-6"
+            >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider animate-in fade-in slide-in-from-bottom-4 duration-1000 mx-auto lg:mx-0">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -121,10 +150,13 @@ export default function LandingPage() {
               <p className="text-lg md:text-lg text-muted-foreground font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
                 A bespoke concierge marketplace designed for Actors, Singers, and Industry Professionals to collaborate seamlessly.
               </p>
-            </div>
+            </motion.div>
 
             {/* Right Column: Dynamic Interactive Cards */}
-            <div
+            <motion.div
+              initial={{ x: 100, opacity: 0 }}
+              animate={pageLoaded ? { x: 0, opacity: 1 } : { x: 100, opacity: 0 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
               className="flex flex-col sm:flex-row gap-4 w-full lg:col-span-6 lg:ml-auto h-[700px] sm:h-[450px] lg:h-[500px]"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
@@ -302,12 +334,17 @@ export default function LandingPage() {
                   )}
                 </div>
               </motion.div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* Dynamic Section: Trusted Partners Logo Loop */}
-        <section className="border-y border-border/40 py-6 bg-secondary/5 overflow-hidden">
+        <motion.section
+          initial={{ y: 100, opacity: 0 }}
+          animate={pageLoaded ? { y: 0, opacity: 1 } : { y: 100, opacity: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+          className="border-y border-border/40 py-6 bg-secondary/5 overflow-hidden"
+        >
           <div className="opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
             <LogoLoop
               logos={[
@@ -336,7 +373,7 @@ export default function LandingPage() {
               fadeOut={true}
             />
           </div>
-        </section>
+        </motion.section>
 
         {/* Infinite 3D Talent Grid */}
         <section className="h-[70vh] relative bg-zinc-950 overflow-hidden border-y border-white/5">
@@ -388,7 +425,13 @@ export default function LandingPage() {
         <section id="features" className="min-h-screen flex items-center py-24 px-6 relative overflow-hidden bg-zinc-950/20">
           <div className="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
             {/* Left side (35%) */}
-            <div className="lg:col-span-4 space-y-6">
+            <motion.div
+              initial={{ x: -60, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-4 space-y-6"
+            >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider">
                 Platform Essentials
               </div>
@@ -399,24 +442,57 @@ export default function LandingPage() {
                 Everything you need to discover, manage, and book world-class talent in one place, optimized for high-end cinematic workflows.
               </p>
 
-              <div className="flex flex-col gap-4 pt-4 border-t border-white/5">
-                <div className="flex items-center gap-3">
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  visible: { transition: { staggerChildren: 0.2 } },
+                  hidden: {}
+                }}
+                className="flex flex-col gap-4 pt-4 border-t border-white/5"
+              >
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0 }
+                  }}
+                  className="flex items-center gap-3"
+                >
                   <div className="w-2 h-2 rounded-full bg-primary" />
                   <span className="text-sm font-semibold">4K High-Res Portfolio Hosting</span>
-                </div>
-                <div className="flex items-center gap-3">
+                </motion.div>
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0 }
+                  }}
+                  className="flex items-center gap-3"
+                >
                   <div className="w-2 h-2 rounded-full bg-primary" />
                   <span className="text-sm font-semibold">Instant Compound Filtering</span>
-                </div>
-                <div className="flex items-center gap-3">
+                </motion.div>
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0 }
+                  }}
+                  className="flex items-center gap-3"
+                >
                   <div className="w-2 h-2 rounded-full bg-primary" />
                   <span className="text-sm font-semibold">Secure HLS Stream Protection</span>
-                </div>
-              </div>
-            </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
 
             {/* Right side (65%) */}
-            <div className="lg:col-span-8 w-full">
+            <motion.div
+              initial={{ x: 60, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-8 w-full"
+            >
               <MagicBento
                 textAutoHide={false}
                 enableStars={true}
@@ -473,7 +549,7 @@ export default function LandingPage() {
                   }
                 ]}
               />
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -513,30 +589,61 @@ export default function LandingPage() {
             {/* Grain/Noise Texture for Pro Look */}
             <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
-            <div className="relative z-10 space-y-8 md:space-y-12 text-center">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.15 } },
+                hidden: {}
+              }}
+              className="relative z-10 space-y-8 md:space-y-12 text-center"
+            >
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.9, y: 20 },
+                  visible: { opacity: 1, scale: 1, y: 0 }
+                }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]"
               >
                 Now Casting Globally
               </motion.div>
 
               <div className="space-y-4 md:space-y-6">
-                <h2 className="font-heading text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter text-white leading-[1.1] md:leading-[0.9]">
+                <motion.h2
+                  variants={{
+                    hidden: { opacity: 0, y: 40 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-heading text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter text-white leading-[1.1] md:leading-[0.9]"
+                >
                   Ready to Begin Your <br />
                   <span className="text-primary italic">
                     <GlitchText speed={0.8} enableShadows={true}>Next Production?</GlitchText>
                   </span>
-                </h2>
-                <p className="text-lg md:text-2xl text-white/60 max-w-2xl mx-auto font-medium px-4 md:px-0">
+                </motion.h2>
+                <motion.p
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-lg md:text-2xl text-white/60 max-w-2xl mx-auto font-medium px-4 md:px-0"
+                >
                   Join the elite directory used by the industry's top <br className="hidden md:block" />
                   casting directors and producers worldwide.
-                </p>
+                </motion.p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 md:gap-6 pt-8 w-full max-w-2xl mx-auto">
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col sm:flex-row items-stretch justify-center gap-4 md:gap-6 pt-8 w-full max-w-2xl mx-auto"
+              >
                 <Magnetic strength={0.3} className="w-full flex-1 flex">
                   <Button
                     size="xl"
@@ -555,8 +662,8 @@ export default function LandingPage() {
                     Contact Sales
                   </Button>
                 </Magnetic>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Decorative Floating Elements */}
             <motion.div
@@ -580,6 +687,6 @@ export default function LandingPage() {
       </main>
 
       <Footer />
-    </div>
+    </div >
   );
 }

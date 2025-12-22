@@ -29,9 +29,13 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     const activeStrengthRef = useRef({ current: 0 });
 
     const [mounted, setMounted] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+        const handleTransitionComplete = () => setIsVisible(true);
+        window.addEventListener('transitionComplete', handleTransitionComplete);
+        return () => window.removeEventListener('transitionComplete', handleTransitionComplete);
     }, []);
 
     const isMobile = useMemo(() => {
@@ -299,7 +303,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     return (
         <div
             ref={cursorRef}
-            className="fixed top-0 left-0 w-0 h-0 pointer-events-none z-9999"
+            className={`fixed top-0 left-0 w-0 h-0 pointer-events-none z-9999 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
             style={{ willChange: 'transform' }}
         >
             <div

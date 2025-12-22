@@ -40,11 +40,27 @@ export default function Footer() {
             {/* Subtle Background Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-linear-to-r from-transparent via-primary/50 to-transparent opacity-30" />
 
-            <div className="max-w-[90rem] mx-auto">
+            <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={{
+                    visible: { transition: { staggerChildren: 0.1 } },
+                    hidden: {}
+                }}
+                className="max-w-[90rem] mx-auto"
+            >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-8 mb-20">
 
                     {/* Brand Column */}
-                    <div className="lg:col-span-4 space-y-8">
+                    <motion.div
+                        variants={{
+                            hidden: { opacity: 0, y: 30 },
+                            visible: { opacity: 1, y: 0 }
+                        }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="lg:col-span-4 space-y-8"
+                    >
                         <Link href="/" className="flex items-center gap-2 group">
                             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 transition-transform group-hover:scale-110">
                                 <Star className="text-white w-6 h-6 fill-white" />
@@ -67,12 +83,20 @@ export default function Footer() {
                                 </Link>
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Links Columns */}
                     <div className="lg:col-span-5 grid grid-cols-2 sm:grid-cols-3 gap-8">
-                        {footerLinks.map((section) => (
-                            <div key={section.title} className="space-y-6">
+                        {footerLinks.map((section, idx) => (
+                            <motion.div
+                                key={section.title}
+                                variants={{
+                                    hidden: { opacity: 0, y: 30 },
+                                    visible: { opacity: 1, y: 0 }
+                                }}
+                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: idx * 0.1 }}
+                                className="space-y-6"
+                            >
                                 <h4 className="text-white font-bold text-sm uppercase tracking-widest">{section.title}</h4>
                                 <ul className="space-y-4">
                                     {section.links.map((link) => (
@@ -87,12 +111,19 @@ export default function Footer() {
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
                     {/* Newsletter Column */}
-                    <div className="lg:col-span-3 space-y-6">
+                    <motion.div
+                        variants={{
+                            hidden: { opacity: 0, y: 30 },
+                            visible: { opacity: 1, y: 0 }
+                        }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+                        className="lg:col-span-3 space-y-6"
+                    >
                         <h4 className="text-white font-bold text-sm uppercase tracking-widest text-center lg:text-left">Stay Informed</h4>
                         <p className="text-muted-foreground text-sm font-medium text-center lg:text-left">
                             Get the latest casting calls and industry news delivered to your inbox.
@@ -107,19 +138,26 @@ export default function Footer() {
                                 Join
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-medium text-muted-foreground">
+                <motion.div
+                    variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0 }
+                    }}
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+                    className="pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-medium text-muted-foreground"
+                >
                     <p>© 2025 TalentDirect Marketplace. All rights reserved. Designed for the Industry.</p>
                     <div className="flex items-center gap-8">
                         <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
                         <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
                         <Link href="#" className="hover:text-white transition-colors">Cookie Policy</Link>
                     </div>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
         </footer>
     );
 }
