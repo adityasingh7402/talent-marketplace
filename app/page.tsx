@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Star, UserCircle2, Briefcase, Search, ShieldCheck, Zap } from "lucide-react";
+import { Star, UserCircle2, Briefcase, Search, ShieldCheck, Zap, ChevronRight } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import GlitchText from "@/components/glitch-text";
 import StaggeredMenu from "@/components/staggered-menu";
@@ -13,12 +13,16 @@ import GridMotion from "@/components/grid-motion";
 import LogoLoop from "@/components/logo-loop";
 import MagicBento from "@/components/magic-bento";
 import InfiniteMenu from "@/components/infinite-menu";
-import { useMemo } from "react";
+import Magnetic from "@/components/magnetic";
+import Footer from "@/components/footer";
+import { useMemo, useRef } from "react";
 
 export default function LandingPage() {
   const [activeCard, setActiveCard] = useState<'talent' | 'industry'>('talent');
   const [isMobile, setIsMobile] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isMobile || isHovered) return;
@@ -473,38 +477,109 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Final CTA */}
+        {/* Final CTA - Upgraded with Spotlight and Magnetic Effects */}
         <section className="px-6 pb-32">
-          <div className="max-w-7xl mx-auto rounded-[3rem] bg-zinc-950 border border-primary/20 shadow-2xl shadow-primary/5 p-12 md:p-24 relative overflow-hidden text-center text-white">
-            {/* Decorative Circles */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+          <motion.div
+            ref={ctaRef}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            onMouseMove={(e) => {
+              if (!ctaRef.current) return;
+              const rect = ctaRef.current.getBoundingClientRect();
+              setMousePos({
+                x: ((e.clientX - rect.left) / rect.width) * 100,
+                y: ((e.clientY - rect.top) / rect.height) * 100,
+              });
+            }}
+            className="max-w-7xl mx-auto rounded-[2rem] md:rounded-[3rem] bg-zinc-950 border border-white/5 shadow-2xl shadow-primary/5 p-8 md:p-24 relative overflow-hidden group"
+          >
+            {/* Animated Border Beam */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-primary/20 to-transparent w-[200%] h-[200%] animate-[spin_8s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+            </div>
 
-            <div className="relative z-10 space-y-10">
-              <h2 className="font-heading text-5xl md:text-7xl font-black">Ready to Begin Your Next Production?</h2>
-              <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto">Join the directory used by the industry's top casting directors and producers.</p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="xl" className="cursor-target w-full sm:w-auto rounded-full px-12 py-8 text-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 shadow-2xl shadow-primary/30">Create Profile</Button>
-                <Button size="xl" className="cursor-target w-full sm:w-auto rounded-full px-12 py-8 text-xl font-bold border-2 border-primary/40 bg-transparent hover:bg-primary/10 text-white transition-all duration-300">Contact Sales</Button>
+            {/* Spotlight Mask Background */}
+            <div
+              className="absolute inset-0 z-0 transition-opacity duration-1000 opacity-20 group-hover:opacity-40"
+              style={{
+                backgroundImage: `radial-gradient(circle 400px at ${mousePos.x}% ${mousePos.y}%, rgba(239, 68, 68, 0.15), transparent), url('/grid/camera.png')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                mixBlendMode: 'overlay',
+              }}
+            />
+
+            {/* Grain/Noise Texture for Pro Look */}
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+            <div className="relative z-10 space-y-8 md:space-y-12 text-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]"
+              >
+                Now Casting Globally
+              </motion.div>
+
+              <div className="space-y-4 md:space-y-6">
+                <h2 className="font-heading text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter text-white leading-[1.1] md:leading-[0.9]">
+                  Ready to Begin Your <br />
+                  <span className="text-primary italic">
+                    <GlitchText speed={0.8} enableShadows={true}>Next Production?</GlitchText>
+                  </span>
+                </h2>
+                <p className="text-lg md:text-2xl text-white/60 max-w-2xl mx-auto font-medium px-4 md:px-0">
+                  Join the elite directory used by the industry's top <br className="hidden md:block" />
+                  casting directors and producers worldwide.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch justify-center gap-4 md:gap-6 pt-8 w-full max-w-2xl mx-auto">
+                <Magnetic strength={0.3} className="w-full flex-1 flex">
+                  <Button
+                    size="xl"
+                    className="cursor-target w-full rounded-full px-8 py-5 md:px-12 md:py-10 text-lg md:text-2xl font-black bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 shadow-[0_0_30px_rgba(239,68,68,0.4)] group/btn border-2 border-transparent"
+                  >
+                    Create Profile
+                    <ChevronRight className="ml-2 w-5 h-5 md:w-6 md:h-6 group-hover/btn:translate-x-1 transition-transform" />
+                  </Button>
+                </Magnetic>
+
+                <Magnetic strength={0.2} className="w-full flex-1 flex">
+                  <Button
+                    size="xl"
+                    className="cursor-target w-full rounded-full px-8 py-5 md:px-12 md:py-10 text-lg md:text-2xl font-black border-2 border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all duration-300 backdrop-blur-md"
+                  >
+                    Contact Sales
+                  </Button>
+                </Magnetic>
               </div>
             </div>
-          </div>
+
+            {/* Decorative Floating Elements */}
+            <motion.div
+              animate={{
+                y: [0, -20, 0],
+                rotate: [0, 5, 0]
+              }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-12 -left-12 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none"
+            />
+            <motion.div
+              animate={{
+                y: [0, 20, 0],
+                rotate: [0, -5, 0]
+              }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"
+            />
+          </motion.div>
         </section>
       </main>
 
-      <footer className="border-t border-border/40 py-12 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-muted-foreground text-sm">
-          <div className="flex items-center gap-2 grayscale brightness-50">
-            <Star className="w-5 h-5 fill-secondary" />
-            <span className="font-heading font-bold text-lg">TalentDirect.</span>
-          </div>
-          <p>© 2025 Talent Marketplace. All rights reserved. Built for Industry Leaders.</p>
-          <div className="flex gap-8">
-            <Link href="#" className="cursor-target hover:text-foreground">Privacy Policy</Link>
-            <Link href="#" className="cursor-target hover:text-foreground">Terms of Service</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
