@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import { gsap } from 'gsap';
+import { usePathname } from 'next/navigation';
 
 export interface TargetCursorProps {
     targetSelector?: string;
@@ -27,6 +28,10 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     const targetCornerPositionsRef = useRef<{ x: number; y: number }[] | null>(null);
     const tickerFnRef = useRef<(() => void) | null>(null);
     const activeStrengthRef = useRef({ current: 0 });
+    const activeTargetRef = useRef<Element | null>(null);
+    const currentLeaveHandlerRef = useRef<(() => void) | null>(null);
+    const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const pathname = usePathname();
 
     const [mounted, setMounted] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
@@ -74,16 +79,70 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
         const cursor = cursorRef.current;
         cornersRef.current = cursor.querySelectorAll<HTMLDivElement>('.target-cursor-corner');
 
-        let activeTarget: Element | null = null;
-        let currentLeaveHandler: (() => void) | null = null;
-        let resumeTimeout: ReturnType<typeof setTimeout> | null = null;
-
         const cleanupTarget = (target: Element) => {
-            if (currentLeaveHandler) {
-                target.removeEventListener('mouseleave', currentLeaveHandler);
+            if (currentLeaveHandlerRef.current) {
+                target.removeEventListener('mouseleave', currentLeaveHandlerRef.current);
             }
-            currentLeaveHandler = null;
+            currentLeaveHandlerRef.current = null;
         };
+
+        const resetCursor = () => {
+            if (tickerFnRef.current) {
+                gsap.ticker.remove(tickerFnRef.current);
+            }
+            isActiveRef.current = false;
+            targetCornerPositionsRef.current = null;
+            gsap.set(activeStrengthRef.current, { current: 0, overwrite: true });
+
+            if (activeTargetRef.current) {
+                cleanupTarget(activeTargetRef.current);
+                activeTargetRef.current = null;
+            }
+
+            if (resumeTimeoutRef.current) {
+                clearTimeout(resumeTimeoutRef.current);
+                resumeTimeoutRef.current = null;
+            }
+
+            if (cornersRef.current) {
+                const corners = Array.from(cornersRef.current);
+                gsap.killTweensOf(corners);
+                const { cornerSize } = constants;
+                const positions = [
+                    { x: -cornerSize * 1.5, y: -cornerSize * 1.5 },
+                    { x: cornerSize * 0.5, y: -cornerSize * 1.5 },
+                    { x: cornerSize * 0.5, y: cornerSize * 0.5 },
+                    { x: -cornerSize * 1.5, y: cornerSize * 0.5 }
+                ];
+                const tl = gsap.timeline();
+                corners.forEach((corner, index) => {
+                    tl.to(corner, { x: positions[index].x, y: positions[index].y, duration: 0.3, ease: 'power3.out' }, 0);
+                });
+            }
+
+            if (cursorRef.current && spinTl.current) {
+                gsap.killTweensOf(cursorRef.current, 'rotation');
+                const currentRotation = gsap.getProperty(cursorRef.current, 'rotation') as number;
+                const normalizedRotation = currentRotation % 360;
+                spinTl.current.kill();
+
+                spinTl.current = gsap
+                    .timeline({ repeat: -1 })
+                    .to(cursorRef.current, { rotation: '+=360', duration: spinDuration, ease: 'none' });
+
+                gsap.to(cursorRef.current, {
+                    rotation: normalizedRotation + 360,
+                    duration: spinDuration * (1 - (normalizedRotation / 360)),
+                    ease: 'none',
+                    onComplete: () => {
+                        spinTl.current?.restart();
+                    }
+                });
+            }
+        };
+
+        // Exposed on window for external access or route changes
+        (window as any).__resetTargetCursor = resetCursor;
 
         gsap.set(cursor, {
             xPercent: -50,
@@ -136,15 +195,15 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
         window.addEventListener('mousemove', moveHandler);
 
         const scrollHandler = () => {
-            if (!activeTarget || !cursorRef.current) return;
+            if (!activeTargetRef.current || !cursorRef.current) return;
             const mouseX = gsap.getProperty(cursorRef.current, 'x') as number;
             const mouseY = gsap.getProperty(cursorRef.current, 'y') as number;
             const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
             const isStillOverTarget =
                 elementUnderMouse &&
-                (elementUnderMouse === activeTarget || elementUnderMouse.closest(targetSelector) === activeTarget);
+                (elementUnderMouse === activeTargetRef.current || elementUnderMouse.closest(targetSelector) === activeTargetRef.current);
             if (!isStillOverTarget) {
-                currentLeaveHandler?.();
+                resetCursor();
             }
         };
         window.addEventListener('scroll', scrollHandler, { passive: true });
@@ -176,16 +235,16 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
             }
             const target = allTargets[0] || null;
             if (!target || !cursorRef.current || !cornersRef.current) return;
-            if (activeTarget === target) return;
-            if (activeTarget) {
-                cleanupTarget(activeTarget);
+            if (activeTargetRef.current === target) return;
+            if (activeTargetRef.current) {
+                cleanupTarget(activeTargetRef.current);
             }
-            if (resumeTimeout) {
-                clearTimeout(resumeTimeout);
-                resumeTimeout = null;
+            if (resumeTimeoutRef.current) {
+                clearTimeout(resumeTimeoutRef.current);
+                resumeTimeoutRef.current = null;
             }
 
-            activeTarget = target;
+            activeTargetRef.current = target;
             const corners = Array.from(cornersRef.current);
             corners.forEach(corner => gsap.killTweensOf(corner));
             gsap.killTweensOf(cursorRef.current, 'rotation');
@@ -219,48 +278,9 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
             });
 
             const leaveHandler = () => {
-                gsap.ticker.remove(tickerFnRef.current!);
-                isActiveRef.current = false;
-                targetCornerPositionsRef.current = null;
-                gsap.set(activeStrengthRef.current, { current: 0, overwrite: true });
-                activeTarget = null;
-                if (cornersRef.current) {
-                    const corners = Array.from(cornersRef.current);
-                    gsap.killTweensOf(corners);
-                    const { cornerSize } = constants;
-                    const positions = [
-                        { x: -cornerSize * 1.5, y: -cornerSize * 1.5 },
-                        { x: cornerSize * 0.5, y: -cornerSize * 1.5 },
-                        { x: cornerSize * 0.5, y: cornerSize * 0.5 },
-                        { x: -cornerSize * 1.5, y: cornerSize * 0.5 }
-                    ];
-                    const tl = gsap.timeline();
-                    corners.forEach((corner, index) => {
-                        tl.to(corner, { x: positions[index].x, y: positions[index].y, duration: 0.3, ease: 'power3.out' }, 0);
-                    });
-                }
-                resumeTimeout = setTimeout(() => {
-                    if (!activeTarget && cursorRef.current && spinTl.current) {
-                        const currentRotation = gsap.getProperty(cursorRef.current, 'rotation') as number;
-                        const normalizedRotation = currentRotation % 360;
-                        spinTl.current.kill();
-                        spinTl.current = gsap
-                            .timeline({ repeat: -1 })
-                            .to(cursorRef.current, { rotation: '+=360', duration: spinDuration, ease: 'none' });
-                        gsap.to(cursorRef.current, {
-                            rotation: normalizedRotation + 360,
-                            duration: spinDuration * (1 - normalizedRotation / 360),
-                            ease: 'none',
-                            onComplete: () => {
-                                spinTl.current?.restart();
-                            }
-                        });
-                    }
-                    resumeTimeout = null;
-                }, 50);
-                cleanupTarget(target);
+                resetCursor();
             };
-            currentLeaveHandler = leaveHandler;
+            currentLeaveHandlerRef.current = leaveHandler;
             target.addEventListener('mouseleave', leaveHandler);
         };
 
@@ -275,8 +295,8 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
             window.removeEventListener('scroll', scrollHandler);
             window.removeEventListener('mousedown', mouseDownHandler);
             window.removeEventListener('mouseup', mouseUpHandler);
-            if (activeTarget) {
-                cleanupTarget(activeTarget);
+            if (activeTargetRef.current) {
+                cleanupTarget(activeTargetRef.current);
             }
             spinTl.current?.kill();
             document.body.style.cursor = originalCursor;
@@ -295,6 +315,12 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
                 .to(cursorRef.current, { rotation: '+=360', duration: spinDuration, ease: 'none' });
         }
     }, [spinDuration, isMobile, mounted]);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && (window as any).__resetTargetCursor) {
+            (window as any).__resetTargetCursor();
+        }
+    }, [pathname]);
 
     if (!mounted || isMobile) {
         return null;

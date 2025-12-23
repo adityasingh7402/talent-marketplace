@@ -6,6 +6,7 @@ import TargetCursor from "@/components/target-cursor";
 import SmoothScroll from "@/components/smooth-scroll";
 import PageTransition from "@/components/page-transition";
 import RevealWrapper from "@/components/reveal-wrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -47,6 +48,7 @@ export default function RootLayout({
             <RevealWrapper>
               {children}
             </RevealWrapper>
+            <Toaster position="top-center" richColors />
           </SmoothScroll>
         </ThemeProvider>
       </body>
