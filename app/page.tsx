@@ -23,9 +23,20 @@ export default function LandingPage() {
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
   const [pageLoaded, setPageLoaded] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/check');
+        if (res.ok) setIsAuthenticated(true);
+      } catch (e) {
+        console.error("Auth check failed", e);
+      }
+    };
+    checkAuth();
+
     const handleTransitionComplete = () => setPageLoaded(true);
     window.addEventListener('transitionComplete', handleTransitionComplete);
     // Fallback if event is missed
@@ -74,7 +85,12 @@ export default function LandingPage() {
             { label: 'How it works', ariaLabel: 'Learn how it works', link: '#how-it-works' },
             { label: 'Features', ariaLabel: 'View our features', link: '#features' },
             { label: 'Pricing', ariaLabel: 'View pricing', link: '#pricing' },
-            { label: 'Sign In', ariaLabel: 'Sign in to your account', link: '/login' }
+            ...(isAuthenticated ? [
+              { label: 'Dashboard', ariaLabel: 'Go to dashboard', link: '/dashboard' }
+            ] : [
+              { label: 'Sign In', ariaLabel: 'Sign in to your account', link: '/login' },
+              { label: 'Sign Up', ariaLabel: 'Create an account', link: '/signup' }
+            ])
           ]}
           socialItems={[
             { label: 'Twitter', link: 'https://twitter.com' },
@@ -114,8 +130,14 @@ export default function LandingPage() {
 
         <div className="flex items-center gap-4">
           <ModeToggle />
-          <Link href="/login" className="cursor-target text-sm font-medium hover:text-primary transition-colors">Sign In</Link>
-          <Button size="sm" className="cursor-target rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-bold border border-primary/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]">Join Platform</Button>
+          {!isAuthenticated && (
+            <Link href="/login" className="cursor-target text-sm font-medium hover:text-primary transition-colors">Sign In</Link>
+          )}
+          <Link href={isAuthenticated ? "/dashboard" : "/signup"}>
+            <Button size="sm" className="cursor-target rounded-full px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-bold border border-primary/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+              {isAuthenticated ? "Dashboard" : "Join Platform"}
+            </Button>
+          </Link>
         </div>
       </motion.nav>
 
