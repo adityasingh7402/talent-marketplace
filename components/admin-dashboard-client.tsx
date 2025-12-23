@@ -163,7 +163,7 @@ export default function AdminDashboardClient({ user }: { user: any }) {
                         </div>
                     </header>
 
-                    <div className="grow overflow-y-auto custom-scrollbar px-6 md:p-10">
+                    <div className="grow overflow-y-auto custom-scrollbar px-6 md:p-10" data-lenis-prevent>
                         <div className="max-w-[95rem] mx-auto">
                             <header className="mb-12">
                                 <motion.h1

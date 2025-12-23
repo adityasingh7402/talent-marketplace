@@ -72,7 +72,7 @@ export default function TalentReview() {
                 </button>
             </div>
 
-            <div className="overflow-hidden rounded-3xl border border-white/5 bg-zinc-950/30 backdrop-blur-xl">
+            <div className="overflow-x-auto rounded-3xl border border-white/5 bg-zinc-950/30 backdrop-blur-xl" data-lenis-prevent>
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/5">
