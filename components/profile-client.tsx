@@ -125,7 +125,7 @@ export default function ProfileClient({ userId }: { userId: string }) {
                         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                             {/* Profile Image */}
                             <div className="relative group">
-                                <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-primary/30 flex items-center justify-center overflow-hidden">
+                                <div className="w-32 h-32 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 border-2 border-primary/30 flex items-center justify-center overflow-hidden">
                                     {profile.profile_image ? (
                                         <img
                                             src={profile.profile_image}
@@ -246,7 +246,7 @@ export default function ProfileClient({ userId }: { userId: string }) {
                     >
                         <Card className="glass p-6 rounded-2xl border border-primary/20 bg-primary/5">
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                                     <Star className="w-5 h-5 text-primary" />
                                 </div>
                                 <div>
