@@ -85,7 +85,7 @@ export default function SignupPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-10 w-full max-w-xl p-8"
+                className="relative z-10 w-full max-w-lg md:p-8 p-5"
             >
                 <div className="flex flex-col items-center mb-10 text-center">
                     <h1 className="font-heading text-4xl md:text-5xl font-black tracking-tighter text-white mb-2">
@@ -94,7 +94,7 @@ export default function SignupPage() {
                     <p className="text-white/60 font-medium">Create your elite talent profile today.</p>
                 </div>
 
-                <div className="glass p-8 rounded-[2.5rem] border border-white/10 shadow-3xl">
+                <div className="glass md:p-8 px-5 py-6 rounded-[2.5rem] border border-white/10 shadow-3xl">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">

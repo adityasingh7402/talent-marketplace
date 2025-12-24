@@ -31,6 +31,8 @@ interface OnboardingModalProps {
 export default function OnboardingModal({ user, onComplete }: OnboardingModalProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showVideoUpload, setShowVideoUpload] = useState(false);
+    const [videoFile, setVideoFile] = useState<File | null>(null);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -49,6 +51,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
         experience: [{ project: '', role: '', year: '' }],
         profile_image: null as File | null,
         profile_image_url: user?.profile_image || '',
+        video_url: '',
         selectedCategory: (user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase() : '') as string
     });
 
@@ -98,6 +101,25 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
         }
     };
 
+    const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 10 * 1024 * 1024) {
+                toast.error("File size must be less than 10MB");
+                return;
+            }
+            // Basic client-side check for video duration isn't robust without loading it into a video element,
+            // but we can enforce file type and size here.
+
+            setVideoFile(file);
+            setFormData(prev => ({
+                ...prev,
+                video_url: URL.createObjectURL(file)
+            }));
+            toast.success("Video attached successfully");
+        }
+    };
+
     const addExperience = () => {
         setFormData(prev => ({
             ...prev,
@@ -109,6 +131,16 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
         const newExp = [...formData.experience];
         newExp[index] = { ...newExp[index], [field]: value };
         setFormData(prev => ({ ...prev, experience: newExp }));
+    };
+
+    const handleStepIntercept = (step: number) => {
+        // Intercept logic for Step 4 Phase 2
+        // When we are on step 4 AND video upload is NOT showing, we want to intercept, show it, and return true (block stepper)
+        if (step === 4 && !showVideoUpload) {
+            setShowVideoUpload(true);
+            return true;
+        }
+        return false;
     };
 
     const handleFinalSubmit = async () => {
@@ -125,7 +157,8 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                     headline: formData.headline,
                     profile_data: {
                         bio: formData.bio,
-                        experience: formData.experience
+                        experience: formData.experience,
+                        video_url: formData.video_url // In real app, this would be the uploaded CDN URL
                     },
                     date_of_birth: formData.dob || null,
                     gender: formData.gender,
@@ -172,6 +205,8 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                     onFinalStepCompleted={handleFinalSubmit}
                     nextButtonText="Continue"
                     backButtonText="Previous"
+                    finishButtonText={showVideoUpload ? "Finalize Profile" : "Continue"}
+                    interceptNext={handleStepIntercept}
                 >
                     {/* Step 1: Core Identity */}
                     <Step>
@@ -204,7 +239,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             type="date"
                                             value={formData.dob}
                                             onChange={(e) => setFormData(prev => ({ ...prev, dob: e.target.value }))}
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold scheme-dark"
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold scheme-dark appearance-none"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -267,7 +302,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                     placeholder="e.g. Method Actor specialized in Thriller & Action"
                                     value={formData.headline}
                                     onChange={(e) => setFormData(prev => ({ ...prev, headline: e.target.value }))}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 md:py-5 text-lg md:text-xl text-white focus:border-primary/50 outline-none transition-all font-bold tracking-tight"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 md:py-5 md:text-xl text-white focus:border-primary/50 outline-none transition-all font-bold tracking-tight"
                                 />
                             </div>
 
@@ -370,76 +405,126 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                         </div>
                     </Step>
 
-                    {/* Step 4: Final Calibration */}
+                    {/* Step 4: Final Calibration (Split into Grid Positioning & Video Upload) */}
                     <Step>
-                        <div className="text-center mb-4 md:mb-8">
-                            <h2 className="text-2xl md:text-3xl font-heading font-black text-white pt-2">Grid Positioning</h2>
-                            <p className="text-sm md:text-base text-white/40">Calibrate your location and career history.</p>
-                        </div>
-
-                        <div className="space-y-12 py-4 md:py-10 px-4 md:px-10">
-                            <div className="flex flex-col md:flex-row gap-4">
-                                <button
-                                    onClick={handleLocationDetect}
-                                    className="flex-1 px-6 py-5 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 transition-all flex items-center justify-center gap-3 group cursor-target"
+                        <AnimatePresence mode="wait">
+                            {!showVideoUpload ? (
+                                <motion.div
+                                    key="grid-form"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 20 }}
+                                    transition={{ duration: 0.4 }}
                                 >
-                                    <MapPin className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="text-white font-bold">{formData.city ? `${formData.city}, ${formData.country}` : 'Detect My Sector'}</span>
-                                </button>
-                                <div className="flex-2 grid grid-cols-2 gap-2">
-                                    <input
-                                        type="text"
-                                        placeholder="City"
-                                        value={formData.city}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50"
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Country"
-                                        value={formData.country}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
-                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50"
-                                    />
-                                </div>
-                            </div>
+                                    <div className="text-center mb-4 md:mb-8">
+                                        <h2 className="text-2xl md:text-3xl font-heading font-black text-white pt-2">Grid Positioning</h2>
+                                        <p className="text-sm md:text-base text-white/40">Calibrate your location and career history.</p>
+                                    </div>
 
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-white/40">Notable Experience</label>
-                                    <button
-                                        onClick={addExperience}
-                                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline"
-                                    >
-                                        + Add Credit
-                                    </button>
-                                </div>
-                                <div className="max-h-[160px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-                                    {formData.experience.map((exp, idx) => (
-                                        <div key={idx} className="grid grid-cols-3 gap-2">
-                                            <input
-                                                placeholder="Project"
-                                                value={exp.project}
-                                                onChange={(e) => updateExperience(idx, 'project', e.target.value)}
-                                                className="bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-xs text-white"
-                                            />
-                                            <input
-                                                placeholder="Role"
-                                                value={exp.role}
-                                                onChange={(e) => updateExperience(idx, 'role', e.target.value)}
-                                                className="bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-xs text-white"
-                                            />
-                                            <input
-                                                placeholder="Year"
-                                                value={exp.year}
-                                                onChange={(e) => updateExperience(idx, 'year', e.target.value)}
-                                                className="bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-xs text-white"
-                                            />
+                                    <div className="space-y-12 py-4 md:py-10 px-4 md:px-10">
+                                        <div className="flex flex-col md:flex-row gap-4">
+                                            <button
+                                                onClick={handleLocationDetect}
+                                                className="flex-1 px-3 py-3 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 transition-all flex items-center justify-center gap-3 group cursor-target"
+                                            >
+                                                <MapPin className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
+                                                <span className="text-white font-bold">{formData.city ? `${formData.city}, ${formData.country}` : 'Detect My Sector'}</span>
+                                            </button>
+                                            <div className="flex-2 grid grid-cols-2 gap-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="City"
+                                                    value={formData.city}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Country"
+                                                    value={formData.country}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50"
+                                                />
+                                            </div>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between items-center">
+                                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40">Latest Best Work</label>
+                                            </div>
+                                            <div className="space-y-2 p-1">
+                                                <input
+                                                    placeholder="Project Name"
+                                                    value={formData.experience[0]?.project || ''}
+                                                    onChange={(e) => updateExperience(0, 'project', e.target.value)}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all"
+                                                />
+                                                <div className="space-y-2">
+                                                    <input
+                                                        placeholder="Role / Position"
+                                                        value={formData.experience[0]?.role || ''}
+                                                        onChange={(e) => updateExperience(0, 'role', e.target.value)}
+                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full"
+                                                    />
+                                                    <input
+                                                        placeholder="Year"
+                                                        value={formData.experience[0]?.year || ''}
+                                                        onChange={(e) => updateExperience(0, 'year', e.target.value)}
+                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="video-upload"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.4 }}
+                                >
+                                    <div className="text-center mb-4 md:mb-8">
+                                        <h2 className="text-2xl md:text-3xl font-heading font-black text-white pt-2">Showreel Calibration</h2>
+                                        <p className="text-sm md:text-base text-white/40">Upload a 30-second clip of your best performance.</p>
+                                    </div>
+
+                                    <div className="flex flex-col items-center justify-center py-10 px-4 md:px-10">
+                                        <label className="relative group cursor-target w-full max-w-lg">
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                onChange={handleVideoUpload}
+                                                accept="video/mp4,video/mov,video/webm"
+                                            />
+                                            <div className="w-full h-64 rounded-3xl border-2 border-dashed border-white/10 group-hover:border-primary/50 transition-all flex flex-col items-center justify-center overflow-hidden bg-white/5 shadow-2xl relative">
+                                                {videoFile ? (
+                                                    <div className="flex flex-col items-center gap-3">
+                                                        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center text-primary">
+                                                            {/* Film icon or similar */}
+                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M7 3v18" /><path d="M3 7.5h4" /><path d="M3 12h18" /><path d="M3 16.5h4" /><path d="M17 3v18" /><path d="M17 7.5h4" /><path d="M17 16.5h4" /></svg>
+                                                        </div>
+                                                        <span className="text-xs font-bold text-white px-4 text-center">{videoFile.name}</span>
+                                                        <span className="text-[10px] text-white/40">{(videoFile.size / (1024 * 1024)).toFixed(2)} MB</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-col items-center gap-4 text-white/20 group-hover:text-primary/50 transition-colors p-6 text-center">
+                                                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+                                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <span className="block text-xs font-black uppercase tracking-widest text-white/60">Upload Video Reel</span>
+                                                            <span className="block text-[10px] text-white/40">Max 10MB • ~30 Seconds • MP4/MOV</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </label>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </Step>
                 </Stepper>
 

@@ -15,6 +15,7 @@ interface StepperProps extends HTMLAttributes<HTMLDivElement> {
     backButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
     nextButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
     backButtonText?: string;
+    finishButtonText?: string;
     nextButtonText?: string;
     disableStepIndicators?: boolean;
     renderStepIndicator?: (props: {
@@ -37,10 +38,12 @@ export default function Stepper({
     nextButtonProps = {},
     backButtonText = 'Back',
     nextButtonText = 'Continue',
+    finishButtonText = 'Finalize Profile',
     disableStepIndicators = false,
     renderStepIndicator,
+    interceptNext,
     ...rest
-}: StepperProps) {
+}: StepperProps & { interceptNext?: (step: number) => boolean }) {
     const [currentStep, setCurrentStep] = useState<number>(initialStep);
     const [direction, setDirection] = useState<number>(0);
     const stepsArray = Children.toArray(children);
@@ -65,6 +68,7 @@ export default function Stepper({
     };
 
     const handleNext = () => {
+        if (interceptNext && interceptNext(currentStep)) return;
         if (!isLastStep) {
             setDirection(1);
             updateStep(currentStep + 1);
@@ -72,6 +76,7 @@ export default function Stepper({
     };
 
     const handleComplete = () => {
+        if (interceptNext && interceptNext(currentStep)) return;
         setDirection(1);
         updateStep(totalSteps + 1);
     };
@@ -82,8 +87,7 @@ export default function Stepper({
             {...rest}
         >
             <div
-                className={`mx-auto w-full max-w-5xl rounded-3xl md:rounded-4xl shadow-2xl bg-zinc-950/80 backdrop-blur-3xl border border-white/10 flex flex-col ${stepCircleContainerClassName}`}
-            >
+                className={`mx-auto w-full max-w-5xl rounded-3xl md:rounded-4xl shadow-2xl bg-zinc-950/80 backdrop-blur-3xl border border-white/10 flex flex-col ${stepCircleContainerClassName}`}>
                 <div className={`${stepContainerClassName} flex w-full items-center p-4 md:p-8`}>
                     {stepsArray.map((_, index) => {
                         const stepNumber = index + 1;
@@ -145,7 +149,7 @@ export default function Stepper({
                                 className="duration-350 flex items-center justify-center rounded-2xl bg-primary py-2.5 px-6 font-black tracking-tight text-white transition hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/20"
                                 {...nextButtonProps}
                             >
-                                {isLastStep ? 'Finalize Profile' : nextButtonText}
+                                {isLastStep ? finishButtonText : nextButtonText}
                             </button>
                         </div>
                     </div>
@@ -297,7 +301,7 @@ function StepConnector({ isComplete }: StepConnectorProps) {
     };
 
     return (
-        <div className="relative mx-4 h-[2px] flex-1 overflow-hidden rounded bg-white/5">
+        <div className="relative mx-2 md:mx-4 h-[2px] flex-1 overflow-hidden rounded bg-white/5">
             <motion.div
                 className="absolute left-0 top-0 h-full opacity-50"
                 variants={lineVariants}
