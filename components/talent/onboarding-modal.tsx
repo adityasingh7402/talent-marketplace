@@ -23,6 +23,17 @@ const SKILL_MAP: Record<string, string[]> = {
     'Director': ['Feature Film', 'Short Film', 'Music Video', 'Commercial', 'Documentary', 'Theater']
 };
 
+const ROLE_IMAGES: Record<string, string> = {
+    'Actor': '/images/roles/actor.png',
+    'Singer': '/images/roles/singer.png',
+    'Dancer': '/images/roles/dancer.png',
+    'Model': '/images/roles/model.png',
+    'Voice Artist': '/images/roles/voice_artist.png',
+    'Stunt Performer': '/images/roles/stunt_performer.png',
+    'Writer': '/images/roles/writer.png',
+    'Director': '/images/roles/director.png'
+};
+
 interface OnboardingModalProps {
     user: any;
     onComplete: () => void;
@@ -41,7 +52,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
         bio: '',
         dob: '',
         gender: '',
-        category: user?.role || 'actor',
+        category: user?.role === 'unknown' ? '' : (user?.role || 'actor'),
         tags: [] as string[],
         city: '',
         state: '',
@@ -52,7 +63,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
         profile_image: null as File | null,
         profile_image_url: user?.profile_image || '',
         video_url: '',
-        selectedCategory: (user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase() : '') as string
+        selectedCategory: (user?.role && user.role !== 'unknown' ? user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase() : '') as string
     });
 
     useEffect(() => {
@@ -226,7 +237,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                         placeholder="liam_smith_actor"
                                         value={formData.username}
                                         onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold"
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold cursor-target"
                                     />
                                 </div>
 
@@ -239,7 +250,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             type="date"
                                             value={formData.dob}
                                             onChange={(e) => setFormData(prev => ({ ...prev, dob: e.target.value }))}
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold scheme-dark appearance-none"
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold scheme-dark appearance-none cursor-target"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -302,7 +313,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                     placeholder="e.g. Method Actor specialized in Thriller & Action"
                                     value={formData.headline}
                                     onChange={(e) => setFormData(prev => ({ ...prev, headline: e.target.value }))}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 md:py-5 md:text-xl text-white focus:border-primary/50 outline-none transition-all font-bold tracking-tight"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 md:py-5 md:text-xl text-white focus:border-primary/50 outline-none transition-all font-bold tracking-tight cursor-target"
                                 />
                             </div>
 
@@ -313,7 +324,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                     rows={5}
                                     value={formData.bio}
                                     onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                                    className="w-full bg-white/5 border border-white/10 rounded-3xl px-6 py-5 text-white focus:border-primary/50 outline-none transition-all resize-none font-medium leading-relaxed"
+                                    className="w-full bg-white/5 border border-white/10 rounded-3xl px-6 py-5 text-white focus:border-primary/50 outline-none transition-all resize-none font-medium leading-relaxed cursor-target"
                                 />
                             </div>
                         </div>
@@ -344,10 +355,18 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             <button
                                                 key={role}
                                                 onClick={() => setFormData(prev => ({ ...prev, selectedCategory: role, category: role }))}
-                                                className="px-4 py-4 rounded-2xl border bg-white/5 border-white/10 text-white/60 hover:border-primary/50 hover:text-white transition-all font-bold text-xs uppercase tracking-widest group"
+                                                className="relative px-4 py-8 rounded-2xl border bg-white/5 border-white/10 text-white hover:border-primary/50 transition-all font-bold text-xs uppercase tracking-widest group cursor-target overflow-hidden"
                                             >
-                                                <Sparkles className="w-4 h-4 mb-2 mx-auto text-primary/40 group-hover:text-primary transition-colors" />
-                                                {role}
+                                                {ROLE_IMAGES[role] && (
+                                                    <>
+                                                        <div
+                                                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110 opacity-60 group-hover:opacity-80"
+                                                            style={{ backgroundImage: `url(${ROLE_IMAGES[role]})` }}
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors" />
+                                                    </>
+                                                )}
+                                                <span className="relative z-10 drop-shadow-md">{role}</span>
                                             </button>
                                         ))}
                                     </motion.div>
@@ -360,12 +379,6 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                         className="space-y-6"
                                     >
                                         <div className="flex justify-between items-center mb-4">
-                                            <button
-                                                onClick={() => setFormData(prev => ({ ...prev, selectedCategory: '', tags: [] }))}
-                                                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-primary transition-colors"
-                                            >
-                                                <ArrowLeft className="w-3 h-3" /> Change Primary Role
-                                            </button>
                                             <span className="text-[10px] font-black uppercase tracking-widest text-primary/60">
                                                 {formData.tags.length} Skills Selected
                                             </span>
@@ -381,7 +394,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                             : [...formData.tags, skill];
                                                         setFormData(prev => ({ ...prev, tags: newTags }));
                                                     }}
-                                                    className={`px-4 py-3 rounded-2xl border transition-all font-bold text-[10px] uppercase tracking-widest ${formData.tags.includes(skill)
+                                                    className={`px-4 py-3 rounded-2xl border transition-all font-bold text-[10px] uppercase tracking-widest cursor-target ${formData.tags.includes(skill)
                                                         ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20'
                                                         : 'bg-white/5 border-white/10 text-white/40 hover:border-white/20'
                                                         }`}
@@ -396,7 +409,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                 <Sparkles className="w-5 h-5" />
                                             </div>
                                             <p className="text-[10px] md:text-xs text-white/60 font-medium">
-                                                These specialized tags will make you discoverable to producers looking for <span className="text-white font-bold">{formData.selectedCategory}s</span> with your specific talents.
+                                                These specialized tags will make you discoverable to producers looking for <span className="text-white font-bold">{formData.selectedCategory}s</span> with your specific talents. <button onClick={() => setFormData(prev => ({ ...prev, selectedCategory: '', tags: [] }))} className="text-primary font-bold underline cursor-target hover:text-primary/80 transition-colors">Change Role</button>
                                             </p>
                                         </div>
                                     </motion.div>
@@ -436,14 +449,14 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                     placeholder="City"
                                                     value={formData.city}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50"
+                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50 cursor-target"
                                                 />
                                                 <input
                                                     type="text"
                                                     placeholder="Country"
                                                     value={formData.country}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
-                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50"
+                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50 cursor-target"
                                                 />
                                             </div>
                                         </div>
@@ -457,20 +470,20 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                     placeholder="Project Name"
                                                     value={formData.experience[0]?.project || ''}
                                                     onChange={(e) => updateExperience(0, 'project', e.target.value)}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all cursor-target"
                                                 />
-                                                <div className="space-y-2">
+                                                <div className="flex flex-col md:flex-row gap-2">
                                                     <input
                                                         placeholder="Role / Position"
                                                         value={formData.experience[0]?.role || ''}
                                                         onChange={(e) => updateExperience(0, 'role', e.target.value)}
-                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full"
+                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full cursor-target"
                                                     />
                                                     <input
                                                         placeholder="Year"
                                                         value={formData.experience[0]?.year || ''}
                                                         onChange={(e) => updateExperience(0, 'year', e.target.value)}
-                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full"
+                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full md:w-32 cursor-target"
                                                     />
                                                 </div>
                                             </div>

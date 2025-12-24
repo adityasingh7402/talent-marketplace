@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     console.log('🔥 Signup endpoint called!');
     try {
         const { firstName, lastName, email, password, role } = await req.json();
-        console.log('📝 Received signup data:', { firstName, lastName, email, role: role || 'actor' });
+        console.log('📝 Received signup data:', { firstName, lastName, email, role: role || 'unknown' });
 
         // Check if user already exists
         const { data: existingUser } = await supabase
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
                     last_name: lastName,
                     email: email.toLowerCase(),
                     password: hashedPassword,
-                    role: role || 'actor',
+                    role: role || 'unknown',
                     role_category: roleCategory,
                     status: 'pending',
                 }
