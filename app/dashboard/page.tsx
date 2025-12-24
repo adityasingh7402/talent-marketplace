@@ -18,17 +18,20 @@ export default async function DashboardEntry() {
             const admin = supabaseAdmin();
             const { data: dbUser } = await admin
                 .from("users")
-                .select("status, role_category")
+                .select("status, role_category, onboarding_completed, profile_image, role")
                 .eq("id", user.userId)
                 .single();
 
-            if (dbUser && dbUser.status === "approved") {
+            if (dbUser) {
                 // Determine correct role category logic if needed, but here just trusting DB
                 user = {
                     ...user,
-                    status: "approved",
+                    status: dbUser.status,
+                    onboardingCompleted: dbUser.onboarding_completed,
+                    profile_image: dbUser.profile_image,
+                    role: dbUser.role,
                     roleCategory: dbUser.role_category || user.roleCategory
-                };
+                } as any;
             }
         } catch (error) {
             console.error("Error fetching fresh user status:", error);
@@ -37,12 +40,12 @@ export default async function DashboardEntry() {
     }
 
     // If status is STILL not approved, show the pending message
-    if (user.status !== "approved") {
-        return <PendingApproval email={user.email} />;
+    if (user!.status !== "approved") {
+        return <PendingApproval user={user} />;
     }
 
     // If approved, redirect to specific dashboard
-    if (user.roleCategory === "admin") {
+    if (user!.roleCategory === "admin") {
         redirect("/admin/dashboard");
     } else {
         redirect("/talent/dashboard");

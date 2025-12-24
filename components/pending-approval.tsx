@@ -1,13 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
 import BlobBackground from "@/components/blob-background";
 import GlitchText from "@/components/glitch-text";
+import OnboardingModal from "@/components/talent/onboarding-modal";
 
-export default function PendingApproval({ email }: { email: string }) {
+export default function PendingApproval({ user }: { user: any }) {
+    const [showOnboarding, setShowOnboarding] = useState(!user.onboardingCompleted);
+
+    const handleOnboardingComplete = () => {
+        setShowOnboarding(false);
+    };
+
+    if (showOnboarding) {
+        return (
+            <div className="relative min-h-screen w-full bg-black">
+                <OnboardingModal user={user} onComplete={handleOnboardingComplete} />
+                {/* Optional: Render background behind it if Modal allows transparency, but Modal has its own backdrop */}
+            </div>
+        );
+    }
+
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center bg-background overflow-hidden selection:bg-primary/20 p-6">
             {/* Background Blobs */}
@@ -41,7 +58,7 @@ export default function PendingApproval({ email }: { email: string }) {
                             Request <span className="text-primary italic"><GlitchText speed={0.8}>Submitted.</GlitchText></span>
                         </h1>
                         <p className="text-xl text-white/60 font-medium max-w-lg mx-auto leading-relaxed">
-                            Wait some time, we will notify you via <span className="text-white font-bold">{email}</span> once your profile is approved by our elite curators.
+                            Wait some time, we will notify you via <span className="text-white font-bold">{user.email}</span> once your profile is approved by our elite curators.
                         </p>
                     </div>
 
