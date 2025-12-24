@@ -39,11 +39,21 @@ interface OnboardingModalProps {
     onComplete: () => void;
 }
 
+const calculateAge = (dob: string): number | null => {
+    if (!dob) return null;
+    const birthday = new Date(dob);
+    const ageDifMs = Date.now() - birthday.getTime();
+    const ageDate = new Date(ageDifMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
+
 export default function OnboardingModal({ user, onComplete }: OnboardingModalProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showVideoUpload, setShowVideoUpload] = useState(false);
     const [videoFile, setVideoFile] = useState<File | null>(null);
+    const [usernameError, setUsernameError] = useState<string | null>(null);
+    const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -144,6 +154,39 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
         setFormData(prev => ({ ...prev, experience: newExp }));
     };
 
+    const checkUsername = async (username: string) => {
+        if (!username || username === user?.username) return; // Don't check if empty or same as current
+        if (!user?.email) return; // Cannot check exclusion without user email
+
+        setIsCheckingUsername(true);
+        try {
+            const { data } = await supabase
+                .from('users')
+                .select('id')
+                .eq('username', username)
+                .neq('email', user.email) // Exclude self by email
+                .maybeSingle();
+
+            if (data) {
+                setUsernameError("User already exists, use another.");
+            } else {
+                setUsernameError(null);
+            }
+        } catch (error) {
+            console.error("Error checking username:", error);
+        } finally {
+            setIsCheckingUsername(false);
+        }
+    };
+
+    const handleUsernameBlur = () => {
+        if (formData.username) {
+            checkUsername(formData.username);
+        } else {
+            setUsernameError(null);
+        }
+    };
+
     const handleStepIntercept = (step: number) => {
         // Intercept logic for Step 4 Phase 2
         // When we are on step 4 AND video upload is NOT showing, we want to intercept, show it, and return true (block stepper)
@@ -156,11 +199,63 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
 
     const handleFinalSubmit = async () => {
         setIsSubmitting(true);
-        try {
-            // 1. Handle Image Upload if new image exists (Simulated for now, would use Cloudinary/S3)
-            // For now we just use the ObjectURL or existing
+        let finalProfileImageUrl = formData.profile_image_url;
+        let muxUploadId = null;
+        let muxAssetId = null;
+        let muxPlaybackId = null;
 
-            // 2. Update Supabase
+        try {
+            // 1. Image Upload (Cloudinary)
+            if (formData.profile_image) {
+                toast.info("Uploading profile image...");
+                const signRes = await fetch('/api/upload/cloudinary-sign', { method: 'POST' });
+                const signData = await signRes.json();
+
+                if (signData.signature) {
+                    const cloudName = signData.cloudName;
+                    console.log("Cloudinary Upload Config:", { cloudName, apiKey: signData.apiKey });
+
+                    if (!cloudName) throw new Error("Missing Cloudinary Cloud Name");
+
+                    const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+                    const formDataUpload = new FormData();
+                    formDataUpload.append('file', formData.profile_image);
+                    formDataUpload.append('api_key', signData.apiKey);
+                    formDataUpload.append('timestamp', signData.timestamp.toString());
+                    formDataUpload.append('signature', signData.signature);
+                    formDataUpload.append('folder', 'talent_profiles');
+
+                    const response = await fetch(url, { method: 'POST', body: formDataUpload });
+                    const data = await response.json();
+
+                    if (data.secure_url) {
+                        finalProfileImageUrl = data.secure_url;
+                    } else {
+                        throw new Error("Cloudinary upload failed");
+                    }
+                }
+            }
+
+            // 2. Video Upload (Mux)
+            if (videoFile) {
+                toast.info("Initializing video upload...");
+                const muxRes = await fetch('/api/upload/mux', { method: 'POST' });
+                const muxData = await muxRes.json();
+
+                if (muxData.uploadUrl) {
+                    toast.info("Uploading video reel...");
+                    await fetch(muxData.uploadUrl, {
+                        method: 'PUT',
+                        body: videoFile,
+                        headers: { 'Content-Type': videoFile.type }
+                    });
+
+                    muxUploadId = muxData.uploadId;
+                    // Attempt to poll for asset ID (optional, simplistic)
+                }
+            }
+
+            // 3. Update Supabase
             const { error } = await supabase
                 .from('users')
                 .update({
@@ -169,11 +264,19 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                     profile_data: {
                         bio: formData.bio,
                         experience: formData.experience,
-                        video_url: formData.video_url // In real app, this would be the uploaded CDN URL
+                        video_url: formData.video_url // Keep for local preview reference mainly
                     },
+                    profile_image: finalProfileImageUrl,
+                    mux_upload_id: muxUploadId, // Store upload ID to track processing
+                    // mux_asset_id and mux_playback_id will be updated via webhook ideally
+
                     date_of_birth: formData.dob || null,
+                    age: calculateAge(formData.dob),
                     gender: formData.gender,
+                    role: formData.category.toLowerCase().replace(' ', '_'), // Core role update
                     category: formData.category,
+                    skills: formData.tags, // Sync tags to skills
+                    tags: formData.tags,
                     location_city: formData.city,
                     location_state: formData.state,
                     location_country: formData.country,
@@ -182,7 +285,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                     onboarding_completed: true,
                     status: 'pending' // Reset to pending for review
                 })
-                .eq('id', user.id);
+                .eq('email', user.email);
 
             if (error) throw error;
 
@@ -190,7 +293,8 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
             setIsOpen(false);
             onComplete();
         } catch (error: any) {
-            toast.error(error.message);
+            console.error('Submission error:', error);
+            toast.error(error.message || "Failed to submit profile");
         } finally {
             setIsSubmitting(false);
         }
@@ -232,13 +336,29 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                     <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
                                         <AtSign className="w-3 h-3" /> Unique Identifier
                                     </label>
-                                    <input
-                                        type="text"
-                                        placeholder="liam_smith_actor"
-                                        value={formData.username}
-                                        onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold cursor-target"
-                                    />
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            placeholder="liam_smith_actor"
+                                            value={formData.username}
+                                            onChange={(e) => {
+                                                setFormData(prev => ({ ...prev, username: e.target.value }));
+                                                if (usernameError) setUsernameError(null); // Clear error on typing
+                                            }}
+                                            onBlur={handleUsernameBlur}
+                                            className={`w-full bg-white/5 border ${usernameError ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary/50'} rounded-2xl px-4 py-4 text-white outline-none transition-all font-bold cursor-target`}
+                                        />
+                                        {isCheckingUsername && (
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    {usernameError && (
+                                        <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-2 block pl-1">
+                                            {usernameError}
+                                        </span>
+                                    )}
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
