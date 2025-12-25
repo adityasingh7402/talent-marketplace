@@ -264,7 +264,6 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                     profile_data: {
                         bio: formData.bio,
                         experience: formData.experience,
-                        video_url: formData.video_url // Keep for local preview reference mainly
                     },
                     profile_image: finalProfileImageUrl,
                     mux_upload_id: muxUploadId, // Store upload ID to track processing
@@ -346,7 +345,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                 if (usernameError) setUsernameError(null); // Clear error on typing
                                             }}
                                             onBlur={handleUsernameBlur}
-                                            className={`w-full bg-white/5 border ${usernameError ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary/50'} rounded-2xl px-4 py-4 text-white outline-none transition-all font-bold cursor-target`}
+                                            className={`w-full bg-white/5 border ${usernameError ? 'border-red-500 focus:border-red-500' : 'border-white/10 focus:border-primary/50'} rounded-xl px-4 py-4 text-white outline-none transition-all font-bold cursor-target`}
                                         />
                                         {isCheckingUsername && (
                                             <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -370,7 +369,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             type="date"
                                             value={formData.dob}
                                             onChange={(e) => setFormData(prev => ({ ...prev, dob: e.target.value }))}
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold scheme-dark appearance-none cursor-target"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold scheme-dark appearance-none cursor-target"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -381,7 +380,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             <select
                                                 value={formData.gender}
                                                 onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold appearance-none cursor-target"
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:border-primary/50 outline-none transition-all font-bold appearance-none cursor-target"
                                             >
                                                 <option value="" className="bg-zinc-900">Select</option>
                                                 <option value="male" className="bg-zinc-900">Male</option>
@@ -400,7 +399,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                             <div className="flex flex-col items-center justify-center order-1 md:order-2">
                                 <label className="relative group cursor-target">
                                     <input type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
-                                    <div className="w-32 h-32 md:w-48 md:h-48 rounded-full border-2 border-dashed border-white/10 group-hover:border-primary/50 transition-all flex items-center justify-center overflow-hidden bg-white/5 shadow-2xl">
+                                    <div className="w-32 h-32 md:w-48 md:h-48 rounded-xl border-2 border-dashed border-white/10 group-hover:border-primary/50 transition-all flex items-center justify-center overflow-hidden bg-white/5 shadow-2xl">
                                         {formData.profile_image_url ? (
                                             <img src={formData.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
                                         ) : (
@@ -410,7 +409,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             </div>
                                         )}
                                     </div>
-                                    <div className="absolute bottom-2 right-2 w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-xl scale-0 group-hover:scale-100 transition-transform">
+                                    <div className="absolute bottom-2 right-2 w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-xl scale-0 group-hover:scale-100 transition-transform">
                                         <Sparkles className="w-5 h-5 fill-white" />
                                     </div>
                                 </label>
@@ -433,7 +432,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                     placeholder="e.g. Method Actor specialized in Thriller & Action"
                                     value={formData.headline}
                                     onChange={(e) => setFormData(prev => ({ ...prev, headline: e.target.value }))}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 md:py-5 md:text-xl text-white focus:border-primary/50 outline-none transition-all font-bold tracking-tight cursor-target"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 md:py-5 md:text-xl text-white focus:border-primary/50 outline-none transition-all font-bold tracking-tight cursor-target"
                                 />
                             </div>
 
@@ -444,7 +443,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                     rows={5}
                                     value={formData.bio}
                                     onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                                    className="w-full bg-white/5 border border-white/10 rounded-3xl px-6 py-5 text-white focus:border-primary/50 outline-none transition-all resize-none font-medium leading-relaxed cursor-target"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-5 text-white focus:border-primary/50 outline-none transition-all resize-none font-medium leading-relaxed cursor-target"
                                 />
                             </div>
                         </div>
@@ -475,7 +474,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             <button
                                                 key={role}
                                                 onClick={() => setFormData(prev => ({ ...prev, selectedCategory: role, category: role }))}
-                                                className="relative px-4 py-8 rounded-2xl border bg-white/5 border-white/10 text-white hover:border-primary/50 transition-all font-bold text-xs uppercase tracking-widest group cursor-target overflow-hidden"
+                                                className="relative px-4 py-8 rounded-xl border bg-white/5 border-white/10 text-white hover:border-primary/50 transition-all font-bold text-xs uppercase tracking-widest group cursor-target overflow-hidden"
                                             >
                                                 {ROLE_IMAGES[role] && (
                                                     <>
@@ -514,7 +513,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                             : [...formData.tags, skill];
                                                         setFormData(prev => ({ ...prev, tags: newTags }));
                                                     }}
-                                                    className={`px-4 py-3 rounded-2xl border transition-all font-bold text-[10px] uppercase tracking-widest cursor-target ${formData.tags.includes(skill)
+                                                    className={`px-4 py-3 rounded-xl border transition-all font-bold text-[10px] uppercase tracking-widest cursor-target ${formData.tags.includes(skill)
                                                         ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20'
                                                         : 'bg-white/5 border-white/10 text-white/40 hover:border-white/20'
                                                         }`}
@@ -524,7 +523,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                             ))}
                                         </div>
 
-                                        <div className="p-6 rounded-3xl bg-primary/5 border border-primary/20 flex items-center gap-4">
+                                        <div className="p-6 rounded-xl bg-primary/5 border border-primary/20 flex items-center gap-4">
                                             <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary shrink-0">
                                                 <Sparkles className="w-5 h-5" />
                                             </div>
@@ -558,7 +557,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                         <div className="flex flex-col md:flex-row gap-4">
                                             <button
                                                 onClick={handleLocationDetect}
-                                                className="flex-1 px-3 py-3 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 transition-all flex items-center justify-center gap-3 group cursor-target"
+                                                className="flex-1 px-3 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-primary/50 transition-all flex items-center justify-center gap-3 group cursor-target"
                                             >
                                                 <MapPin className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
                                                 <span className="text-white font-bold">{formData.city ? `${formData.city}, ${formData.country}` : 'Detect My Sector'}</span>
@@ -569,14 +568,14 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                     placeholder="City"
                                                     value={formData.city}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50 cursor-target"
+                                                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50 cursor-target"
                                                 />
                                                 <input
                                                     type="text"
                                                     placeholder="Country"
                                                     value={formData.country}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
-                                                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50 cursor-target"
+                                                    className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm outline-none focus:border-primary/50 cursor-target"
                                                 />
                                             </div>
                                         </div>
@@ -590,20 +589,20 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                     placeholder="Project Name"
                                                     value={formData.experience[0]?.project || ''}
                                                     onChange={(e) => updateExperience(0, 'project', e.target.value)}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all cursor-target"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all cursor-target"
                                                 />
                                                 <div className="flex flex-col md:flex-row gap-2">
                                                     <input
                                                         placeholder="Role / Position"
                                                         value={formData.experience[0]?.role || ''}
                                                         onChange={(e) => updateExperience(0, 'role', e.target.value)}
-                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full cursor-target"
+                                                        className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full cursor-target"
                                                     />
                                                     <input
                                                         placeholder="Year"
                                                         value={formData.experience[0]?.year || ''}
                                                         onChange={(e) => updateExperience(0, 'year', e.target.value)}
-                                                        className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full md:w-32 cursor-target"
+                                                        className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-bold text-white placeholder:text-white/30 focus:border-primary/50 outline-none transition-all w-full md:w-32 cursor-target"
                                                     />
                                                 </div>
                                             </div>
@@ -631,19 +630,26 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                                                 onChange={handleVideoUpload}
                                                 accept="video/mp4,video/mov,video/webm"
                                             />
-                                            <div className="w-full h-64 rounded-3xl border-2 border-dashed border-white/10 group-hover:border-primary/50 transition-all flex flex-col items-center justify-center overflow-hidden bg-white/5 shadow-2xl relative">
+                                            <div className="w-full h-64 rounded-xl border-2 border-dashed border-white/10 group-hover:border-primary/50 transition-all flex flex-col items-center justify-center overflow-hidden bg-white/5 shadow-2xl relative">
                                                 {videoFile ? (
                                                     <div className="flex flex-col items-center gap-3">
-                                                        <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center text-primary">
+                                                        <div className="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center text-primary">
                                                             {/* Film icon or similar */}
                                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M7 3v18" /><path d="M3 7.5h4" /><path d="M3 12h18" /><path d="M3 16.5h4" /><path d="M17 3v18" /><path d="M17 7.5h4" /><path d="M17 16.5h4" /></svg>
                                                         </div>
                                                         <span className="text-xs font-bold text-white px-4 text-center">{videoFile.name}</span>
                                                         <span className="text-[10px] text-white/40">{(videoFile.size / (1024 * 1024)).toFixed(2)} MB</span>
                                                     </div>
+                                                ) : (formData.video_url && !formData.video_url.startsWith('blob:')) ? (
+                                                    <div className="aspect-video w-full rounded-xl overflow-hidden bg-zinc-900 border border-white/5 relative group">
+                                                        <video src={formData.video_url} className="w-full h-full object-cover" controls />
+                                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <span className="text-white text-sm font-bold">Click to change video</span>
+                                                        </div>
+                                                    </div>
                                                 ) : (
                                                     <div className="flex flex-col items-center gap-4 text-white/20 group-hover:text-primary/50 transition-colors p-6 text-center">
-                                                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
+                                                        <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center">
                                                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
                                                         </div>
                                                         <div className="space-y-1">
@@ -662,7 +668,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
                 </Stepper>
 
                 {isSubmitting && (
-                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 rounded-4xl">
+                    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 rounded-xl">
                         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                         <p className="mt-4 font-black uppercase tracking-[0.3em] text-white text-xs">Finalizing Profile...</p>
                     </div>

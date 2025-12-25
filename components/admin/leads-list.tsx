@@ -43,7 +43,7 @@ export default function LeadsList() {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex justify-between items-center bg-white/5 p-6 rounded-3xl border border-white/5">
+            <div className="flex justify-between items-center bg-zinc-950 p-6 rounded-xl border border-white/5">
                 <div>
                     <h2 className="text-2xl font-heading font-black text-white">Inquiries</h2>
                     <p className="text-white/40 text-sm">Casting director requests and industry leads.</p>
@@ -59,13 +59,13 @@ export default function LeadsList() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {leads.length === 0 ? (
-                    <div className="col-span-full py-20 text-center bg-white/5 rounded-3xl border border-dashed border-white/10">
+                    <div className="col-span-full py-20 text-center bg-zinc-950 rounded-xl border border-dashed border-white/10">
                         <MessageCircle className="w-12 h-12 text-white/10 mx-auto mb-4" />
                         <p className="text-white/20 italic font-medium">Safe from leads for now.</p>
                     </div>
                 ) : (
                     leads.map((lead) => (
-                        <div key={lead.id} className="glass p-6 rounded-3xl border border-white/5 space-y-4 hover:border-primary/20 transition-all group">
+                        <div key={lead.id} className="bg-zinc-950 p-6 rounded-xl border border-white/5 space-y-4 hover:border-primary/20 transition-all group">
                             <div className="flex justify-between items-start">
                                 <div>
                                     <h3 className="font-bold text-white text-lg">{lead.name}</h3>

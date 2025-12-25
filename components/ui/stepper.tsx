@@ -87,7 +87,7 @@ export default function Stepper({
             {...rest}
         >
             <div
-                className={`mx-auto w-full max-w-5xl rounded-3xl md:rounded-4xl shadow-2xl bg-zinc-950/80 backdrop-blur-3xl border border-white/10 flex flex-col ${stepCircleContainerClassName}`}>
+                className={`mx-auto w-full max-w-5xl rounded-xl shadow-2xl bg-zinc-950/80 backdrop-blur-3xl border border-white/10 flex flex-col ${stepCircleContainerClassName}`}>
                 <div className={`${stepContainerClassName} flex w-full items-center p-4 md:p-8`}>
                     {stepsArray.map((_, index) => {
                         const stepNumber = index + 1;
@@ -146,7 +146,7 @@ export default function Stepper({
                             )}
                             <button
                                 onClick={isLastStep ? handleComplete : handleNext}
-                                className="cursor-target duration-350 flex items-center justify-center rounded-2xl bg-primary py-2.5 px-6 font-black tracking-tight text-white transition hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/20"
+                                className="cursor-target duration-350 flex items-center justify-center rounded-xl bg-primary py-2.5 px-6 font-black tracking-tight text-white transition hover:bg-primary/90 active:scale-95 shadow-lg shadow-primary/20"
                                 {...nextButtonProps}
                             >
                                 {isLastStep ? finishButtonText : nextButtonText}

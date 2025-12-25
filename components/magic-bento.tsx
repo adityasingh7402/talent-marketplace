@@ -614,11 +614,11 @@ const MagicBento: React.FC<BentoProps> = ({
             <BentoCardGrid gridRef={gridRef}>
                 <div className="card-responsive grid gap-3">
                     {cards.map((card, index) => {
-                        const baseClassName = `card flex flex-col justify-between relative min-h-[150px] w-full max-w-full p-6 rounded-[24px] border border-solid border-white/5 bg-zinc-950/50 backdrop-blur-sm font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 ${enableBorderGlow ? 'card--border-glow' : ''
+                        const baseClassName = `card flex flex-col justify-between relative min-h-[150px] w-full max-w-full p-6 rounded-xl border border-solid border-white/5 bg-zinc-950 font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 ${enableBorderGlow ? 'card--border-glow' : ''
                             } group`; // Added group class for image hover effect
 
                         const cardStyle = {
-                            backgroundColor: card.color || 'var(--background-dark)',
+                            backgroundColor: 'var(--background-dark)', // Force solid background
                             color: 'var(--white)',
                             '--glow-x': '50%',
                             '--glow-y': '50%',

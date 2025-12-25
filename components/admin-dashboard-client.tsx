@@ -84,11 +84,11 @@ export default function AdminDashboardClient({ user }: { user: any }) {
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: -300, opacity: 0 }}
                             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                            className="w-72 border-r border-white/5 bg-zinc-950/50 backdrop-blur-2xl flex flex-col p-6 z-50 absolute md:relative h-full"
+                            className="w-72 border-r border-white/5 bg-zinc-950 flex flex-col p-6 z-50 absolute md:relative h-full"
                         >
                             <div className="flex items-center justify-between mb-12">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/20 transform rotate-3">
+                                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-2xl shadow-primary/20 transform rotate-3">
                                         <Star className="text-white w-6 h-6 fill-white" />
                                     </div>
                                     <div>
@@ -106,7 +106,7 @@ export default function AdminDashboardClient({ user }: { user: any }) {
                                     <button
                                         key={item.id}
                                         onClick={() => setActiveView(item.id as AdminView)}
-                                        className={`w-full flex items-center gap-3 px-4 py-4 rounded-2xl transition-all duration-300 group relative overflow-hidden cursor-target ${activeView === item.id
+                                        className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all duration-300 group relative overflow-hidden cursor-target ${activeView === item.id
                                             ? 'bg-primary/10 text-primary shadow-inner shadow-white/5'
                                             : 'text-white/40 hover:bg-white/5 hover:text-white'
                                             }`}
@@ -124,7 +124,7 @@ export default function AdminDashboardClient({ user }: { user: any }) {
                             </nav>
 
                             <div className="mt-8 space-y-4 pt-4 border-t border-white/5">
-                                <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-center gap-3">
+                                <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
                                         <ShieldAlert className="w-5 h-5 text-orange-500" />
                                     </div>
@@ -136,7 +136,7 @@ export default function AdminDashboardClient({ user }: { user: any }) {
 
                                 <button
                                     onClick={handleLogout}
-                                    className="w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-red-500/60 hover:text-red-500 hover:bg-red-500/5 transition-all duration-300 group cursor-target"
+                                    className="w-full flex items-center gap-3 px-4 py-4 rounded-xl text-red-500/60 hover:text-red-500 hover:bg-red-500/5 transition-all duration-300 group cursor-target"
                                 >
                                     <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                                     <span className="font-bold text-sm">Sign Out</span>

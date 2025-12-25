@@ -74,7 +74,7 @@ export default function SignupPage() {
             {/* Back Button */}
             <div className="absolute top-6 left-6 md:top-10 md:left-10 z-50">
                 <Link href="/" className="group flex items-center gap-2 text-white/40 hover:text-white transition-colors py-2">
-                    <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all">
+                    <div className="w-8 h-8 rounded-xl border border-white/10 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all">
                         <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                     </div>
                     <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline-block">Back to Home</span>
@@ -94,7 +94,7 @@ export default function SignupPage() {
                     <p className="text-white/60 font-medium">Create your elite talent profile today.</p>
                 </div>
 
-                <div className="glass md:p-8 px-5 py-6 rounded-[2.5rem] border border-white/10 shadow-3xl">
+                <div className="glass md:p-8 px-5 py-6 rounded-xl border border-white/10 shadow-3xl">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function SignupPage() {
                                         required
                                         value={formData.firstName}
                                         onChange={handleChange}
-                                        className="h-14 bg-white/5 border-white/10 rounded-2xl pl-12 focus:border-primary/50 focus:ring-primary/20 text-white placeholder:text-white/20 transition-all font-medium"
+                                        className="h-14 bg-white/5 border-white/10 rounded-xl pl-12 focus:border-primary/50 focus:ring-primary/20 text-white placeholder:text-white/20 transition-all font-medium"
                                     />
                                 </div>
                             </div>
@@ -123,7 +123,7 @@ export default function SignupPage() {
                                         required
                                         value={formData.lastName}
                                         onChange={handleChange}
-                                        className="h-14 bg-white/5 border-white/10 rounded-2xl pl-12 focus:border-primary/50 focus:ring-primary/20 text-white placeholder:text-white/20 transition-all font-medium"
+                                        className="h-14 bg-white/5 border-white/10 rounded-xl pl-12 focus:border-primary/50 focus:ring-primary/20 text-white placeholder:text-white/20 transition-all font-medium"
                                     />
                                 </div>
                             </div>
@@ -168,7 +168,7 @@ export default function SignupPage() {
                         <Button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full h-16 rounded-2xl bg-primary text-primary-foreground text-lg font-black hover:bg-primary/90 shadow-lg shadow-primary/20 group transition-all"
+                            className="w-full h-16 rounded-xl bg-primary text-primary-foreground text-lg font-black hover:bg-primary/90 shadow-lg shadow-primary/20 group transition-all"
                         >
                             {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                                 <>
