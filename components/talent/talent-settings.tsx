@@ -29,10 +29,10 @@ export default function TalentSettings() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="grid grid-cols-1 gap-6">
                 {sections.map((section, idx) => (
-                    <div key={idx} className="bg-white/5 border border-white/10 rounded-3xl p-6 hover:bg-white/[0.07] transition-all group overflow-hidden relative">
+                    <div key={idx} className="bg-zinc-900 border border-white/10 rounded-xl p-6 hover:bg-zinc-800 transition-all group overflow-hidden relative">
                         <div className="flex items-start justify-between">
                             <div className="flex gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-black/20 flex items-center justify-center shrink-0">
+                                <div className="w-12 h-12 rounded-xl bg-black/20 flex items-center justify-center shrink-0">
                                     {section.icon}
                                 </div>
                                 <div>
@@ -41,7 +41,7 @@ export default function TalentSettings() {
 
                                     <div className="space-y-3">
                                         {section.items.map((item, i) => (
-                                            <button key={i} className="flex items-center justify-between w-full p-4 rounded-2xl bg-black/20 border border-white/5 hover:border-white/10 hover:bg-black/30 transition-all text-white/60 hover:text-white text-sm font-bold group/item cursor-target">
+                                            <button key={i} className="flex items-center justify-between w-full p-4 rounded-xl bg-black/20 border border-white/5 hover:border-white/10 hover:bg-black/30 transition-all text-white/60 hover:text-white text-sm font-bold group/item cursor-target">
                                                 {item}
                                                 <ChevronRight className="w-4 h-4 group-hover/item:translate-x-1 transition-transform" />
                                             </button>

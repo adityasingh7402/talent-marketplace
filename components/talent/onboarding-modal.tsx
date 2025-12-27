@@ -306,7 +306,7 @@ export default function OnboardingModal({ user, onComplete }: OnboardingModalPro
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+                className="absolute inset-0 bg-black/95"
             />
 
             <motion.div

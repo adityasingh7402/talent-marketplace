@@ -8,14 +8,15 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function POST() {
+export async function POST(req: Request) {
     try {
+        const { folder = 'talent_profiles' } = await req.json().catch(() => ({}));
         const timestamp = Math.round(new Date().getTime() / 1000);
 
         const signature = cloudinary.utils.api_sign_request(
             {
                 timestamp: timestamp,
-                folder: 'talent_profiles', // Optional: organize uploads
+                folder: folder,
             },
             process.env.CLOUDINARY_API_SECRET!
         );
@@ -25,6 +26,7 @@ export async function POST() {
             timestamp,
             cloudName: process.env.CLOUDINARY_CLOUD_NAME,
             apiKey: process.env.CLOUDINARY_API_KEY,
+            folder
         });
     } catch (error: any) {
         console.error('Cloudinary signature error:', error);
